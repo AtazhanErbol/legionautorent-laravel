@@ -7,13 +7,20 @@ use App\Models\CarCategory;
 use App\Models\City;
 use App\Models\CmsModel;
 use App\Models\FAQ;
+use App\Models\Page;
 use App\Models\SiteSettings;
 
 class Seo
 {
     public static function languages(?CmsModel $obj): array
     {
-        return ['ru', ...($obj ? $obj->translations->filter(fn ($t) => $t->published && $t->title && $t->description && $t->h1 && $t->content)->pluck('language')->all() : ['kk', 'en'])];
+        $languages = ['ru', ...($obj ? $obj->translations->filter(fn ($t) => $t->published && $t->title && $t->description && $t->h1 && $t->content)->pluck('language')->all() : ['kk', 'en'])];
+        if ($obj instanceof Page && in_array($obj->path, ['/cars/', '/faq/'])) {
+            $dependencies = $obj->path === '/cars/' ? self::catalogLanguages() : self::faqLanguages();
+            $languages = array_values(array_intersect($languages, $dependencies));
+        }
+
+        return $languages;
     }
 
     public static function catalogLanguages(): array
@@ -32,10 +39,16 @@ class Seo
 
     public static function page(?CmsModel $obj = null, string $title = '', string $description = '', string $h1 = '', bool $noindex = false, ?array $languages = null): array
     {
+        if ($obj === null) {
+            $obj = Page::where('active', true)->where('path', request()->attributes->get('base_path'))->with('translations')->first();
+        }
         $root = config('legion.site_url');
         $path = request()->attributes->get('base_path', '/');
         $lang = app()->getLocale();
         $langs = $languages ?? self::languages($obj);
+        if ($obj && $languages !== null) {
+            $langs = array_values(array_intersect($langs, self::languages($obj)));
+        }
         $fallback = ! in_array($lang, $langs);
         $title = $obj ? localized($obj, 'seo_title') : $title;
         $description = $obj ? localized($obj, 'seo_description') : $description;
@@ -69,7 +82,7 @@ class Seo
         $faq = $ctx['faqs'] ?? [];
         $result = [['@context' => 'https://schema.org', '@type' => 'WebSite', '@id' => $root.'/#website', 'name' => $site->name, 'url' => $root.'/', 'inLanguage' => $lang], ['@context' => 'https://schema.org', '@type' => 'WebPage', 'name' => $seo['title'], 'url' => $seo['canonical'], 'inLanguage' => $lang, 'isPartOf' => ['@id' => $root.'/#website']]];
         $biz = ['@context' => 'https://schema.org', '@type' => ['AutoRental', 'LocalBusiness'], '@id' => $root.($city?->legacy_path ?? '/').'#business', 'name' => $site->name, 'url' => $root.($city?->legacy_path ?? '/'), 'telephone' => $city?->phone ?: $site->phone];
-        $address = $city ? $city->address : $site->address;
+        $address = localized($city ?? $site, 'address');
         if ($address) {
             $biz['address'] = ['@type' => 'PostalAddress', 'streetAddress' => $address, 'addressCountry' => 'KZ', ...($city ? ['addressLocality' => localized($city, 'name')] : [])];
         }if ($hours = $city?->hours ?: $site->hours) {

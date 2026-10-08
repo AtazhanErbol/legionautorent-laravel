@@ -21,6 +21,9 @@ class PublicContext
         $r->attributes->set('nonce', base64_encode(random_bytes(24)));
         if (! str_starts_with($path, '/'.config('legion.admin_path')) && ! str_starts_with($path, '/livewire/') && ! in_array($base, ['/healthz', '/healthz/', '/robots.txt'])) {
             $cities = PublicContent::all()['cities'];
+            if ($r->query->has('city') && blank($r->query('city'))) {
+                $r->session()->forget('selected_city');
+            }
             $chosen = $cities->firstWhere('slug', $r->query('city'));
             if (! $chosen && $base !== '/') {
                 $chosen = $cities->firstWhere('legacy_path', $base);

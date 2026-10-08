@@ -11,6 +11,8 @@ class CarPriceResource extends CmsResource
 {
     protected static bool $isDiscovered = true;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = CarPrice::class;
 
     protected static ?string $slug = 'tariffs';

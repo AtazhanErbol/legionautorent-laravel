@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Pages;
 
 use App\Filament\Resources\CarPriceResource;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\Pages\CmsEditRecord as EditRecord;
 
 class EditCarPrice extends EditRecord
 {

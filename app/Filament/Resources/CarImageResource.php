@@ -11,6 +11,8 @@ class CarImageResource extends CmsResource
 {
     protected static bool $isDiscovered = true;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = CarImage::class;
 
     protected static ?string $slug = 'photos';

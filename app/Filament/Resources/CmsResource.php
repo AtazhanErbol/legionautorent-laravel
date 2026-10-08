@@ -36,6 +36,8 @@ abstract class CmsResource extends Resource
 {
     protected static bool $isDiscovered = false;
 
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static function allowed(string $action): bool
     {
         return auth()->user()?->hasCmsPermission($action, class_basename(static::getModel())) ?? false;

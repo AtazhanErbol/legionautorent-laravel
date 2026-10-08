@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Pages;
 
 use App\Filament\Resources\FAQResource;
-use Filament\Resources\Pages\EditRecord;
+use App\Filament\Resources\Pages\CmsEditRecord as EditRecord;
 
 class EditFAQ extends EditRecord
 {

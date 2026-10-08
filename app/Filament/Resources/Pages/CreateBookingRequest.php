@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Pages;
 
 use App\Filament\Resources\BookingRequestResource;
-use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\Pages\CmsCreateRecord as CreateRecord;
 
 class CreateBookingRequest extends CreateRecord
 {

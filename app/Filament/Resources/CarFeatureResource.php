@@ -15,7 +15,7 @@ class CarFeatureResource extends CmsResource
 
     protected static ?string $slug = 'features';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Автопарк';
+    protected static string|\UnitEnum|null $navigationGroup = 'Справочники';
 
     protected static ?string $modelLabel = 'Оснащение';
 

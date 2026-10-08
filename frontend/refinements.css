@@ -79,3 +79,16 @@ button:focus-visible,.button:focus-visible,.icon-button:focus-visible,.car-detai
 
 .brand-name{text-transform:none;letter-spacing:.02em}
 .header-scroll-marker{position:absolute;top:0;left:0;width:1px;height:32px;pointer-events:none;visibility:hidden}
+
+/* One city label and a balanced title above the showroom. */
+.mercedes-caption{text-align:center}.mercedes-captions h1,.mercedes-display,.mercedes-step-line{margin-inline:auto}.mercedes-actions{justify-content:center}
+.mercedes-preview[data-mode=cinematic] .mercedes-caption{top:15%}.mercedes-preview[data-mode=cinematic] .mercedes-chapter{top:112px}
+@media(min-width:900px){.mercedes-captions h1{max-width:1080px;font-size:clamp(32px,3.25vw,48px)}.mercedes-eyebrow>span{border:0;background:transparent;padding:0}}
+@media(max-width:899px){.mercedes-preview[data-mode=cinematic] .mercedes-caption{top:calc(80px + 4svh)}}
+@media(orientation:landscape) and (max-height:560px){.mercedes-preview[data-mode=cinematic] .mercedes-caption{top:88px;text-align:left}.mercedes-captions h1,.mercedes-display,.mercedes-step-line{margin-left:0}.mercedes-actions{justify-content:flex-start}}
+.request-feedback{padding:16px;border:1px solid var(--line);margin-bottom:16px;color:var(--white);scroll-margin-top:120px}.request-feedback[data-state=success]{border-color:var(--yellow)}.request-feedback[data-state=error]{border-color:#ea8d7c}.request-field-error{color:#ffc1b4;font-size:13px;margin:8px 0 0}.request-form [aria-invalid=true]{border-color:#ea8d7c}
+
+.quick-filter{grid-template-columns:1fr 1fr 1.2fr auto}.catalog-sidebar form{grid-template-columns:repeat(2,minmax(0,1fr))}.catalog-sidebar form>.filter-title,.catalog-sidebar form>.subtle{grid-column:1/-1}
+@media(max-width:767px){.quick-filter{grid-template-columns:1fr 1fr}.quick-filter>div:first-child{grid-column:1/-1}.quick-filter>.button{grid-column:1/-1}.catalog-sidebar form{grid-template-columns:1fr}}
+
+.fleet-toolbar{justify-content:flex-end}.fleet-toolbar .sort-control{margin-left:auto}

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Pages;
 
+use App\Filament\Resources\Pages\CmsCreateRecord as CreateRecord;
 use App\Filament\Resources\TranslationResource;
-use Filament\Resources\Pages\CreateRecord;
 
 class CreateTranslation extends CreateRecord
 {

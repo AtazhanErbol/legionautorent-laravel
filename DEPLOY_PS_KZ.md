@@ -47,9 +47,12 @@ php artisan key:generate --force
 php artisan migrate --force
 php artisan legion:import-django storage/app/migration/django-snapshot.json --dry-run
 php artisan legion:import-django storage/app/migration/django-snapshot.json
+php artisan legion:publish-locales
 php artisan optimize
 php artisan filament:optimize
 ```
+
+`legion:publish-locales` заполняет 866 полных переводов KK/EN, короткие интерфейсные надписи и SEO-записи каталога/FAQ/форм. Команда повторяемая: опубликованные редактором переводы не заменяются. Также исправляется исходная заглушка текста Павлодара, если она ещё не была отредактирована.
 
 **Перед импортом не выполнять db:seed.** Импорт допускает только пустые целевые таблицы и не заменяет существующие данные. `key:generate` выполняется только при первичной установке. При последующих обновлениях сохранить APP_KEY: смена ключа аннулирует сессии и защищённые токены форм.
 
@@ -95,6 +98,6 @@ mysqldump -h DB_HOST -u DB_USER -p --single-transaction --no-tablespaces --defau
 
 Не хранить копии с заявками в публичном GitHub. Регулярно проверять восстановление в отдельную пустую базу. Cron/планировщик используется для бэкапов; очереди приложения сейчас синхронные и отдельный worker для отправки формы не требуется.
 
-При обновлении: бэкап → новый код → Composer → `php artisan migrate --force` → `php artisan optimize` → `php artisan filament:optimize` → проверка форм и страниц. Полный исходный импорт повторно не запускать. Откат выполняется возвратом предыдущего кода и проверенной резервной копии, без `migrate:fresh` на рабочей базе.
+При обновлении: бэкап → новый код → Composer → `php artisan migrate --force` → `php artisan legion:publish-locales` → `php artisan optimize` → `php artisan filament:optimize` → проверка форм и страниц. Полный исходный импорт повторно не запускать. Откат выполняется возвратом предыдущего кода и проверенной резервной копии, без `migrate:fresh` на рабочей базе.
 
 Официальные сведения: [развёртывание Laravel](https://laravel.com/framework/docs/13.x/deployment), [Artisan в панели PS.kz](https://docs.ps.kz/ru/hosting/website-hosting/control-panel/php-artisan-commands). Настройки конкретного аккаунта и доступность PHP 8.4 проверяются перед загрузкой.

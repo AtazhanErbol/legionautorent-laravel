@@ -50,7 +50,12 @@ class SeoController extends Controller
             })->where('robots', 'index,follow')->with('translations')->get();
             $entries = $objects->map(fn ($o) => [$o->getAbsoluteUrl(), Seo::languages($o), $o->updated_at?->toAtomString()])->all();
             if ($section === 'pages') {
-                $entries = [...$entries, ['/cars/', Seo::catalogLanguages(), null], ['/faq/', Seo::faqLanguages(), null]];
+                $existing = array_column($entries, 0);
+                foreach (['/cars/' => Seo::catalogLanguages(), '/faq/' => Seo::faqLanguages()] as $path => $languages) {
+                    if (! in_array($path, $existing)) {
+                        $entries[] = [$path, $languages, null];
+                    }
+                }
             }$x->startElement('urlset');
             $x->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
             $x->writeAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');

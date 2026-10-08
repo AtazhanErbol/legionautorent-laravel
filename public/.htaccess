@@ -1,3 +1,7 @@
+<IfModule mod_dir.c>
+    DirectoryIndex index.php
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -13,10 +17,7 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Redirect Trailing Slashes If Not A Folder...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} (.+)/$
-    RewriteRule ^ %1 [L,R=301]
+    # Preserve exact legacy paths: city URLs have a trailing slash, car URLs do not.
 
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d

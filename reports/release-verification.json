@@ -1,0 +1,344 @@
+{
+  "date": "2026-10-08",
+  "tests": {
+    "tool": "phpunit",
+    "result": "passed",
+    "tests": 47,
+    "passed": 47,
+    "assertions": 1966,
+    "duration_ms": 40730
+  },
+  "public_browser": {
+    "cases": [
+      {
+        "case": "home-ru-1440",
+        "passed": true,
+        "h1": "ПРОКАТ АВТО БЕЗ ВОДИТЕЛЯ В АСТАНЕ, ЦЕНЫ ОТ 20 000 ТГ/СУТКИ"
+      },
+      {
+        "case": "home-kk-1440",
+        "passed": true,
+        "h1": "АСТАНАДА ЖҮРГІЗУШІСІЗ АВТОКӨЛІК ЖАЛҒА АЛУ, ТӘУЛІГІНЕ 20 000 ₸ БАСТАП"
+      },
+      {
+        "case": "home-en-1440",
+        "passed": true,
+        "h1": "SELF-DRIVE CAR RENTAL IN ASTANA, FROM 20,000 KZT PER DAY"
+      },
+      {
+        "case": "hero-1440-0",
+        "passed": true,
+        "frame": "0",
+        "state": "ready"
+      },
+      {
+        "case": "hero-1440-0.25",
+        "passed": true,
+        "frame": "149",
+        "state": "ready"
+      },
+      {
+        "case": "hero-1440-0.5",
+        "passed": true,
+        "frame": "297",
+        "state": "ready"
+      },
+      {
+        "case": "hero-1440-0.75",
+        "passed": true,
+        "frame": "446",
+        "state": "ready"
+      },
+      {
+        "case": "hero-1440-1",
+        "passed": true,
+        "frame": "595",
+        "state": "ready"
+      },
+      {
+        "case": "hero-reverse-1440",
+        "passed": true
+      },
+      {
+        "case": "kostanay-contacts-home-1440",
+        "passed": true
+      },
+      {
+        "case": "city-default-catalog-1440",
+        "passed": true
+      },
+      {
+        "case": "city-clear-catalog-1440",
+        "passed": true
+      },
+      {
+        "case": "compact-filter-1440",
+        "passed": true,
+        "fields": [
+          "city",
+          "min_price",
+          "max_price",
+          "sort"
+        ]
+      },
+      {
+        "case": "car-gallery-en-1440",
+        "passed": true
+      },
+      {
+        "case": "docker-production-admin-login",
+        "passed": true
+      },
+      {
+        "case": "docker-unified-photo-editor",
+        "passed": true
+      },
+      {
+        "case": "home-ru-390",
+        "passed": true,
+        "h1": "ПРОКАТ АВТО БЕЗ ВОДИТЕЛЯ В АСТАНЕ, ЦЕНЫ ОТ 20 000 ТГ/СУТКИ"
+      },
+      {
+        "case": "home-kk-390",
+        "passed": true,
+        "h1": "АСТАНАДА ЖҮРГІЗУШІСІЗ АВТОКӨЛІК ЖАЛҒА АЛУ, ТӘУЛІГІНЕ 20 000 ₸ БАСТАП"
+      },
+      {
+        "case": "home-en-390",
+        "passed": true,
+        "h1": "SELF-DRIVE CAR RENTAL IN ASTANA, FROM 20,000 KZT PER DAY"
+      },
+      {
+        "case": "hero-390-0",
+        "passed": true,
+        "frame": "0",
+        "state": "ready"
+      },
+      {
+        "case": "hero-390-0.25",
+        "passed": true,
+        "frame": "149",
+        "state": "ready"
+      },
+      {
+        "case": "hero-390-0.5",
+        "passed": true,
+        "frame": "297",
+        "state": "ready"
+      },
+      {
+        "case": "hero-390-0.75",
+        "passed": true,
+        "frame": "446",
+        "state": "ready"
+      },
+      {
+        "case": "hero-390-1",
+        "passed": true,
+        "frame": "595",
+        "state": "ready"
+      },
+      {
+        "case": "hero-reverse-390",
+        "passed": true
+      },
+      {
+        "case": "kostanay-contacts-home-390",
+        "passed": true
+      },
+      {
+        "case": "city-default-catalog-390",
+        "passed": true
+      },
+      {
+        "case": "city-clear-catalog-390",
+        "passed": true
+      },
+      {
+        "case": "compact-filter-390",
+        "passed": true,
+        "fields": [
+          "city",
+          "min_price",
+          "max_price",
+          "sort"
+        ]
+      },
+      {
+        "case": "car-gallery-en-390",
+        "passed": true
+      }
+    ],
+    "js_errors": [],
+    "bad_responses": [],
+    "passed": true
+  },
+  "admin_browser": {
+    "isolated_database": "legion_test",
+    "upload_bytes": 2974604,
+    "cases": [
+      {
+        "case": "desktop-create-PNG-3MB-car-with-discount",
+        "passed": true
+      },
+      {
+        "case": "mobile-JPEG-upload-main-photo-switch",
+        "passed": true,
+        "overflow": false
+      },
+      {
+        "case": "mobile-reopen-two-photos",
+        "passed": true
+      },
+      {
+        "case": "mobile-dropdown-opaque-in-viewport",
+        "passed": true,
+        "details": {
+          "background": "rgb(25, 27, 24)",
+          "right": 332,
+          "width": 390
+        }
+      },
+      {
+        "case": "uploaded-car-public-photo-and-text",
+        "passed": true
+      },
+      {
+        "case": "cars-table-1440",
+        "passed": true
+      },
+      {
+        "case": "cars-table-390",
+        "passed": true
+      }
+    ],
+    "js_errors": [],
+    "bad_responses": [],
+    "created_url": "http://127.0.0.1:8005/control-legion/cars/93/edit",
+    "test_car_slug": "proverka-adminki-5b8f73",
+    "passed": true
+  },
+  "inline_booking": {
+    "cases": [
+      {
+        "case": "inline-errors-and-success-kk",
+        "passed": true,
+        "message": "Рақмет! Өтінім жіберілді. Менеджер мәліметтерді нақтылау үшін сізге хабарласады."
+      },
+      {
+        "case": "inline-errors-and-success-en",
+        "passed": true,
+        "message": "Thank you! Your request has been sent. Our manager will contact you to confirm the details."
+      }
+    ],
+    "js_errors": [],
+    "passed": true
+  },
+  "cross_browser": {
+    "cases": [
+      {
+        "browser": "firefox",
+        "width": 1440,
+        "frames": [
+          0,
+          297,
+          595
+        ],
+        "reverse_frame": 0,
+        "passed": true
+      },
+      {
+        "browser": "firefox",
+        "width": 390,
+        "frames": [
+          0,
+          297,
+          595
+        ],
+        "reverse_frame": 0,
+        "passed": true
+      },
+      {
+        "browser": "webkit",
+        "width": 1440,
+        "frames": [
+          0,
+          296,
+          595
+        ],
+        "reverse_frame": 0,
+        "passed": true
+      },
+      {
+        "browser": "webkit",
+        "width": 390,
+        "frames": [
+          0,
+          297,
+          595
+        ],
+        "reverse_frame": 0,
+        "passed": true
+      },
+      {
+        "mode": "no-js",
+        "passed": true
+      },
+      {
+        "mode": "reduced-motion",
+        "passed": true
+      }
+    ],
+    "errors": [],
+    "passed": true
+  },
+  "performance": [
+    {
+      "profile": "mobile",
+      "lighthouse_version": "13.5.0",
+      "fetch_time": "2026-10-08T12:04:48.395Z",
+      "score": 97,
+      "lcp_ms": 2326.5,
+      "cls": 0,
+      "tbt_ms": 103,
+      "fcp_ms": 1327.8,
+      "speed_index_ms": 2576.5
+    },
+    {
+      "profile": "mobile-repeat",
+      "lighthouse_version": "13.5.0",
+      "fetch_time": "2026-10-08T12:16:31.397Z",
+      "score": 96,
+      "lcp_ms": 2327.1,
+      "cls": 0,
+      "tbt_ms": 102.1,
+      "fcp_ms": 1285.8,
+      "speed_index_ms": 3936.4
+    },
+    {
+      "profile": "desktop",
+      "lighthouse_version": "13.5.0",
+      "fetch_time": "2026-10-08T12:05:02.182Z",
+      "score": 100,
+      "lcp_ms": 621.8,
+      "cls": 0,
+      "tbt_ms": 0,
+      "fcp_ms": 350.3,
+      "speed_index_ms": 545.3
+    }
+  ],
+  "working_urls": 330,
+  "legacy_404": 27,
+  "apache_95_200": true,
+  "seo_duplicates": {
+    "ru-title": [],
+    "ru-description": [],
+    "ru-h1": [],
+    "kk-title": [],
+    "kk-description": [],
+    "kk-h1": [],
+    "en-title": [],
+    "en-description": [],
+    "en-h1": []
+  }
+}

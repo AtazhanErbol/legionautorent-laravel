@@ -37,9 +37,9 @@ class BookingController extends Controller
         $callback = str_ends_with(rtrim($r->getPathInfo(), '/'), '/callback');
         $key = 'lead:'.hash('sha256', $r->ip());
         if (RateLimiter::tooManyAttempts($key, 5)) {
-            return $this->show($r, $callback, ['_global' => ['Слишком много попыток. Попробуйте через 15 минут.']], 429);
+            return $this->failure($r, $callback, ['_global' => [site_text('Слишком много попыток. Попробуйте через 15 минут.')]], 429);
         }RateLimiter::hit($key, 900);
-        $v = validator($r->all(), ['name' => 'required|string|max:120', 'phone' => ['required', 'string', 'max:30', 'regex:/^[+()\d\s-]+$/'], 'city' => 'required|exists:locations_city,id', 'car' => $callback ? 'nullable' : 'nullable|exists:cars_car,id', 'comment' => 'nullable|string|max:2000', 'consent' => 'accepted', 'website' => 'nullable|size:0', 'source_token' => 'required|string', 'start_date' => 'nullable|date|after_or_equal:today', 'end_date' => 'nullable|date|after:start_date']);
+        $v = validator($r->all(), ['name' => 'required|string|max:120', 'phone' => ['required', 'string', 'max:30', 'regex:/^[+()\d\s-]+$/'], 'city' => 'required|exists:locations_city,id', 'car' => $callback ? 'nullable' : 'nullable|exists:cars_car,id', 'comment' => 'nullable|string|max:2000', 'consent' => 'accepted', 'website' => 'nullable|size:0', 'source_token' => 'required|string', 'start_date' => 'nullable|date|after_or_equal:today', 'end_date' => 'nullable|date|after:start_date'], [], array_combine(['name', 'phone', 'city', 'car', 'comment', 'consent', 'start_date', 'end_date', 'source_token', 'website'], array_map('site_text', ['Ваше имя', 'Телефон', 'Город', 'Автомобиль', 'Комментарий', 'Согласие на обработку данных', 'Дата получения', 'Дата возврата', 'Форма', 'Website'])));
         $v->after(function ($v) use ($r, $callback) {
             $digits = preg_replace('/\D/', '', (string) $r->phone);
             if (strlen($digits) < 10 || strlen($digits) > 15) {
@@ -55,7 +55,7 @@ class BookingController extends Controller
             }
         });
         if ($v->fails()) {
-            return $this->show($r, $callback, $v->errors()->toArray(), 400);
+            return $this->failure($r, $callback, $v->errors()->toArray(), 400);
         }
         try {
             $source = json_decode(Crypt::decryptString($r->source_token), true, 512, JSON_THROW_ON_ERROR);
@@ -63,12 +63,23 @@ class BookingController extends Controller
                 throw new \RuntimeException;
             }
         } catch (\Throwable) {
-            return $this->show($r, $callback, ['_global' => [site_text('Срок действия формы истёк. Обновите страницу.')]], 400);
+            return $this->failure($r, $callback, ['_global' => [site_text('Срок действия формы истёк. Обновите страницу.')]], 400);
         }
         $data = ['name' => $r->name, 'phone' => '+'.preg_replace('/\D/', '', $r->phone), 'city_id' => $r->city, 'car_id' => $callback ? null : ($r->car ?: null), 'comment' => $r->comment ?? '', 'consent' => true, 'consent_text' => site_text(self::CONSENT), 'source_page' => language_url($source['path']), 'kind' => $callback ? 'callback' : 'booking', 'status' => 'NEW', 'start_date' => $callback ? null : ($r->start_date ?: null), 'end_date' => $callback ? null : ($r->end_date ?: null), ...$r->session()->get('attribution', [])];
         BookingRequest::create($data);
         $r->session()->put('booking_success', true);
 
+        if ($r->expectsJson()) {
+            return response()->json(['success' => true, 'message' => site_text('Спасибо! Заявка отправлена. Менеджер свяжется с вами для уточнения деталей.')]);
+        }
+
         return redirect(language_url('/request-success/'));
+    }
+
+    private function failure(Request $request, bool $callback, array $errors, int $status): \Symfony\Component\HttpFoundation\Response
+    {
+        return $request->expectsJson()
+            ? response()->json(['success' => false, 'message' => $errors['_global'][0] ?? site_text('Проверьте заполнение формы.'), 'errors' => $errors], $status)
+            : $this->show($request, $callback, $errors, $status);
     }
 }

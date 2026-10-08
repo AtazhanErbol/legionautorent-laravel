@@ -10,6 +10,8 @@
 - [Работа с админкой](ADMIN_GUIDE.md)
 - [Результаты переноса и проверки](MIGRATION_REPORT.md)
 - [Производительность](PERFORMANCE_REPORT.md)
+- [Проверка админки и изменений](RELEASE_CHECKLIST.md)
+- [Сравнение с действующим сайтом](SEO_LIVE_COMPARISON.md)
 
 ## Требования
 
@@ -35,13 +37,14 @@ php artisan key:generate
 php artisan migrate --force
 php artisan legion:import-django storage/app/migration/django-snapshot.json --dry-run
 php artisan legion:import-django storage/app/migration/django-snapshot.json
+php artisan legion:publish-locales
 # Распаковать архив медиа в public/media/
 npm ci --ignore-scripts
 npm run build
 php artisan serve --host=127.0.0.1 --port=8003
 ```
 
-Для демонстрации без частного снимка вместо импорта можно использовать `php artisan db:seed`. После этого импорт полного снимка в ту же базу будет отклонён: импорт намеренно не перезаписывает существующие записи. Создать администратора демонстрации: `php artisan legion:admin ваш_логин` — пароль вводится скрыто в терминале.
+Для демонстрации без частного снимка вместо импорта можно использовать `php artisan db:seed`. После `db:seed` выполнить `php artisan legion:publish-locales`. После этого импорт полного снимка в ту же базу будет отклонён: импорт намеренно не перезаписывает существующие записи. Создать администратора демонстрации: `php artisan legion:admin ваш_логин` — пароль вводится скрыто в терминале.
 
 Админка: `/control-legion/`. После полного импорта действуют прежние логин и пароль. При первом входе Django-хеш обновляется до bcrypt, сам пароль сохраняется.
 
@@ -67,6 +70,7 @@ PHP, Composer, MySQL и их кеши установлены внутри `.loca
 docker compose up -d --build
 docker compose exec app php artisan migrate --force
 docker compose exec app php artisan legion:import-django storage/app/migration/django-snapshot.json
+docker compose exec app php artisan legion:publish-locales
 docker compose exec app php artisan optimize
 docker compose exec app php artisan filament:optimize
 ```

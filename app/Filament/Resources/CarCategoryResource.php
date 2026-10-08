@@ -15,7 +15,7 @@ class CarCategoryResource extends CmsResource
 
     protected static ?string $slug = 'categories';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Автопарк';
+    protected static string|\UnitEnum|null $navigationGroup = 'Справочники';
 
     protected static ?string $modelLabel = 'Класс автомобиля';
 

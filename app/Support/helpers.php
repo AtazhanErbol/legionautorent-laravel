@@ -2,6 +2,7 @@
 
 use App\Models\Car;
 use App\Models\CarCategory;
+use App\Models\CarDiscount;
 use App\Models\City;
 use App\Models\Page;
 use App\Models\SiteSettings;
@@ -70,7 +71,7 @@ function localized(mixed $obj, string $field, ?string $lang = null): mixed
         }
     }
 
-    return $obj->$field ?? '';
+    return $obj instanceof CarDiscount && $field === 'label' ? preg_replace('/дней/u', site_text('дней'), $obj->$field ?? '') : ($obj->$field ?? '');
 }
 function language_url(string $path, ?string $lang = null): string
 {
@@ -107,6 +108,10 @@ function car_discount(Car $car): int
 {
     return $car->discounts->max('percent') ?? 0;
 }
+function home_url(?string $lang = null): string
+{
+    return language_url(request()->attributes->get('selected_city')?->legacy_path ?? '/', $lang);
+}
 function menu_url(string $path): string
 {
     $city = request()->attributes->get('selected_city');
@@ -114,7 +119,7 @@ function menu_url(string $path): string
         $path .= (str_contains($path, '?') ? '&' : '?').'city='.rawurlencode($city->slug);
     }
 
-    return language_url($path);
+    return $path === '/' ? home_url() : language_url($path);
 }
 function map_link(?City $city, SiteSettings $site): string
 {

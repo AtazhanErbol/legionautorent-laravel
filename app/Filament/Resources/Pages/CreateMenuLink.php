@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Pages;
 
 use App\Filament\Resources\MenuLinkResource;
-use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\Pages\CmsCreateRecord as CreateRecord;
 
 class CreateMenuLink extends CreateRecord
 {

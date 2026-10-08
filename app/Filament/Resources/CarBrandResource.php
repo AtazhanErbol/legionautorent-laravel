@@ -15,7 +15,7 @@ class CarBrandResource extends CmsResource
 
     protected static ?string $slug = 'brands';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Автопарк';
+    protected static string|\UnitEnum|null $navigationGroup = 'Справочники';
 
     protected static ?string $modelLabel = 'Марка';
 

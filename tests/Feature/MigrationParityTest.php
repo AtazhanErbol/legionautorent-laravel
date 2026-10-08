@@ -76,6 +76,7 @@ class MigrationParityTest extends CatalogueTestCase
     {
         $this->get('/kostanay/?city=kostanay')->assertOk();
         $this->get('/contacts/')->assertSee('data-city-label>Костанай', false);
-        $this->get('/')->assertSee('<link rel="canonical" href="https://legionautorent.kz/">', false);
+        $this->get('/')->assertRedirect('/kostanay/');
+        $this->get('/kostanay/')->assertSee('<link rel="canonical" href="https://legionautorent.kz/kostanay/">', false);
     }
 }

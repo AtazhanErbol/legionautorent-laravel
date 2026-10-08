@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Pages;
 
+use App\Filament\Resources\Pages\CmsCreateRecord as CreateRecord;
 use App\Filament\Resources\SiteSectionResource;
-use Filament\Resources\Pages\CreateRecord;
 
 class CreateSiteSection extends CreateRecord
 {

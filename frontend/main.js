@@ -45,24 +45,6 @@ const startPageMotion=()=>{
   else setTimeout(initPageMotion,0);
 };
 motionTriggers.forEach(type=>window.addEventListener(type,startPageMotion,{passive:true}));
-const quick=$('[data-quick-search]');
-if(quick){
-  const start=$('[name=start_date]',quick),end=$('[name=end_date]',quick);
-  const validateDates=()=>{end.min=start.value;end.setCustomValidity(start.value&&end.value&&end.value<=start.value?quick.dataset.dateError:'');};
-  start.addEventListener('change',validateDates);end.addEventListener('change',validateDates);
-  quick.addEventListener('submit',event=>{
-    if($('[name=city]',quick).value!==quick.dataset.city)return;
-    event.preventDefault();const fleet=$('#fleet [data-fleet]');
-    fleet.setCategory($('[name=category]',quick).value);
-    // Dates are a request, never a claim of confirmed availability.
-    fleet.querySelectorAll('[data-event=click_whatsapp]').forEach(link=>{
-      link.dataset.originalHref||=link.href;const url=new URL(link.dataset.originalHref);
-      const dates=[start.value,end.value].filter(Boolean).join(' — ');
-      if(dates)url.searchParams.set('text',`${url.searchParams.get('text')} ${dates}`);link.href=url;
-    });
-    $('#fleet').scrollIntoView({behavior:reduced.matches?'auto':'smooth'});
-  });
-}
 window.dataLayer=window.dataLayer||[];
 document.addEventListener('click',event=>{
   const link=event.target.closest('[data-event]');
@@ -71,10 +53,33 @@ document.addEventListener('click',event=>{
 const submitted=$('[data-page-event]');
 if(submitted)window.dataLayer.push({event:submitted.dataset.pageEvent,page:location.pathname});
 
-// Forms work through normal POST and CSRF even with JavaScript disabled.
-document.querySelectorAll('[data-request-form]').forEach(form=>form.addEventListener('submit',()=>{
-  if(!form.checkValidity())return;
-  const button=$('button[type=submit]',form);button.disabled=true;button.setAttribute('aria-busy','true');
+// Progressive enhancement: validation and success remain beside the request.
+document.querySelectorAll('[data-request-form]').forEach(form=>form.addEventListener('submit',async event=>{
+  if(!form.checkValidity()||!window.fetch)return;
+  event.preventDefault();
+  const button=$('button[type=submit]',form);if(button.disabled)return;
+  button.disabled=true;button.setAttribute('aria-busy','true');
+  const feedback=$('[data-request-feedback]',form);
+  feedback.hidden=true;form.querySelectorAll('.request-field-error').forEach(el=>el.remove());
+  form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});
+  try{
+    const response=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json','X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'});
+    const data=await response.json();
+    if(response.ok&&data.success){
+      feedback.textContent=data.message;feedback.dataset.state='success';
+      form.querySelectorAll('.field,.consent-field,button[type=submit]').forEach(el=>el.hidden=true);
+      window.dataLayer.push({event:'submit_request',page:location.pathname});
+    }else{
+      feedback.textContent=data.message||form.dataset.error;feedback.dataset.state='error';
+      Object.entries(data.errors||{}).forEach(([name,messages])=>{
+        const input=form.elements.namedItem(name);if(!input||!input.insertAdjacentElement)return;
+        const error=document.createElement('p');error.className='request-field-error';error.id=`${input.id}-error`;error.textContent=messages[0];
+        input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby',error.id);input.insertAdjacentElement('afterend',error);
+      });
+      form.querySelector('[aria-invalid]')?.focus({preventScroll:true});
+    }
+  }catch{feedback.textContent=form.dataset.error;feedback.dataset.state='error';}
+  finally{feedback.hidden=false;button.disabled=false;button.removeAttribute('aria-busy');}
 }));
 document.querySelectorAll('[data-gallery]').forEach(gallery=>{
   const track=$('.gallery-track',gallery),figures=[...track.querySelectorAll('figure')];
@@ -130,6 +135,8 @@ if(filters&&window.fetch){
       const option=[...($('[name=city]',filters)?.options||[])].find(item=>item.value===city);
       if(city&&option){
         $('[data-city-label]').textContent=option.textContent;
+        const home=response.headers.get('X-Legion-Home');
+        if(home)document.querySelectorAll('[data-city-home]').forEach(link=>link.href=home);
         document.querySelectorAll('[data-site-nav]').forEach(link=>{const href=new URL(link.href);if(href.pathname.endsWith('/cars/')||href.pathname.includes('/cars/category/')){href.searchParams.set('city',city);link.href=href;}});
       }
       if(push)history.pushState(null,'',url);$('meta[name=robots]').content='noindex,follow';

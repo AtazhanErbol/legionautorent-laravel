@@ -36,6 +36,13 @@ class CmsValidation
         return in_array($p, ['/', '/cars/', '/faq/', '/booking/', '/callback/', '/request-success/']) || Car::where('legacy_path', $p)->public()->exists() || City::where('legacy_path', $p)->where('active', true)->exists() || Page::where('path', $p)->where('active', true)->exists() || CarCategory::where('slug', trim(str_replace('/category/', '', $p), '/'))->where('active', true)->exists();
     }
 
+    public static function rangesOverlap(int $from, int $to, int $otherFrom, int $otherTo): bool
+    {
+        $commonBoundary = ($to === $otherFrom || $otherTo === $from) && $from !== $otherFrom;
+
+        return $from <= $otherTo && $otherFrom <= $to && ! $commonBoundary;
+    }
+
     public static function validate(CmsModel $m): void
     {
         foreach ($m->definition()['fields'] ?? [] as $f) {
@@ -87,7 +94,9 @@ class CmsValidation
             }$q = $m->newQuery()->where('car_id', $m->car_id)->where('id', '!=', $m->id ?? 0)->where(fn ($q) => $q->whereNull('max_days')->orWhere('max_days', '>=', $m->min_days));
             if ($m->max_days !== null) {
                 $q->where('min_days', '<=', $m->max_days);
-            }if ($q->exists()) {
+            }$validated = request()->attributes->get('legion.validated_car_relation', []);
+            $validatedTogether = ($validated['car_id'] ?? null) === $m->car_id && ($validated['relationship'] ?? null) === ($m instanceof CarPrice ? 'prices' : 'discounts');
+            if (! $validatedTogether && $q->get()->contains(fn ($other): bool => self::rangesOverlap((int) $m->min_days, (int) ($m->max_days ?? PHP_INT_MAX), (int) $other->min_days, (int) ($other->max_days ?? PHP_INT_MAX)))) {
                 self::fail('min_days', 'Диапазоны тарифов / скидок не должны пересекаться.');
             }
         }
