@@ -41,7 +41,7 @@ class BoundField implements Htmlable
             return '<textarea'.$attrs.' rows="3" maxlength="2000">'.e($this->value).'</textarea>';
         }
 
-        return '<input type="'.$this->type.'"'.$attrs.' value="'.e($this->type === 'checkbox' ? 'on' : $this->value).'"'.($this->type === 'checkbox' && $this->value ? ' checked' : '').($this->name === 'name' ? ' autocomplete="name"' : ($this->name === 'phone' ? ' autocomplete="tel" placeholder="+7 700 000 00 00"' : ($this->name === 'website' ? ' tabindex="-1" autocomplete="off"' : ''))).'>';
+        return '<input type="'.$this->type.'"'.$attrs.' value="'.e($this->type === 'checkbox' ? 'on' : $this->value).'"'.($this->type === 'checkbox' && $this->value ? ' checked' : '').($this->name === 'name' ? ' autocomplete="name"' : ($this->name === 'phone' ? ' autocomplete="tel" inputmode="tel" data-phone-mask placeholder="+7 (___) ___-__-__" maxlength="22"' : ($this->name === 'website' ? ' tabindex="-1" autocomplete="off"' : ''))).'>';
     }
 
     public function __toString()

@@ -121,6 +121,19 @@ function menu_url(string $path): string
 
     return $path === '/' ? home_url() : language_url($path);
 }
+function city_switch_url(City $city): string
+{
+    $request = request();
+    $path = $request->attributes->get('base_path', '/');
+    $cities = $request->attributes->get('nav_cities', collect());
+    if ($path === '/' || $cities->contains('legacy_path', $path)) {
+        $path = $city->legacy_path;
+    }
+    $query = $request->only(['min_price', 'max_price', 'sort']);
+    $query['city'] = $city->slug;
+
+    return language_url($path).'?'.http_build_query($query, '', '&', PHP_QUERY_RFC3986);
+}
 function map_link(?City $city, SiteSettings $site): string
 {
     $address = $city ? ($city->address ?: $city->name) : $site->address;

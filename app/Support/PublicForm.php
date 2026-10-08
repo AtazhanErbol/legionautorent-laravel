@@ -23,7 +23,7 @@ class PublicForm implements \IteratorAggregate
         $this->non_field_errors = new HtmlString(isset($errors['_global']) ? '<p class="errorlist">'.e($errors['_global'][0]).'</p>' : '');
         $defs = $kind === 'filter' ? ['city' => ['Город', 'select', false], 'min_price' => ['Цена от', 'number', false], 'max_price' => ['Цена до', 'number', false], 'sort' => ['Сортировка', 'select', false]] : ['city' => ['Город', 'select', true], 'name' => ['Ваше имя', 'text', true], 'phone' => ['Телефон', 'tel', true], 'comment' => ['Комментарий', 'textarea', false], 'consent' => [BookingController::CONSENT, 'checkbox', true], 'source_token' => ['', 'hidden', true], 'website' => ['Website', 'text', false]];
         if ($kind === 'booking') {
-            $defs = ['car' => ['Автомобиль', 'select', false], ...array_slice($defs, 0, 3, true), 'start_date' => ['Дата получения', 'date', false], 'end_date' => ['Дата возврата', 'date', false], ...array_slice($defs, 3, null, true)];
+            $defs = ['car' => ['Автомобиль', 'select', false], ...$defs];
         }
         foreach ($defs as $n => [$l,$t,$req]) {
             $opts = [];

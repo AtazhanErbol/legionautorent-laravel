@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class BookingController extends Controller
 {
-    const CONSENT = 'Я согласен на обработку имени, телефона, дат аренды и комментария компанией LEGIONAUTORENT для ответа на мою заявку.';
+    const CONSENT = 'Я согласен на обработку имени, телефона и комментария компанией LEGIONAUTORENT для ответа на мою заявку.';
 
     public static function token(string $path): string
     {
@@ -39,11 +39,13 @@ class BookingController extends Controller
         if (RateLimiter::tooManyAttempts($key, 5)) {
             return $this->failure($r, $callback, ['_global' => [site_text('Слишком много попыток. Попробуйте через 15 минут.')]], 429);
         }RateLimiter::hit($key, 900);
-        $v = validator($r->all(), ['name' => 'required|string|max:120', 'phone' => ['required', 'string', 'max:30', 'regex:/^[+()\d\s-]+$/'], 'city' => 'required|exists:locations_city,id', 'car' => $callback ? 'nullable' : 'nullable|exists:cars_car,id', 'comment' => 'nullable|string|max:2000', 'consent' => 'accepted', 'website' => 'nullable|size:0', 'source_token' => 'required|string', 'start_date' => 'nullable|date|after_or_equal:today', 'end_date' => 'nullable|date|after:start_date'], [], array_combine(['name', 'phone', 'city', 'car', 'comment', 'consent', 'start_date', 'end_date', 'source_token', 'website'], array_map('site_text', ['Ваше имя', 'Телефон', 'Город', 'Автомобиль', 'Комментарий', 'Согласие на обработку данных', 'Дата получения', 'Дата возврата', 'Форма', 'Website'])));
+        $v = validator($r->all(), ['name' => 'required|string|max:120', 'phone' => ['required', 'string', 'max:30', 'regex:/^[+()\d\s-]+$/'], 'city' => 'required|exists:locations_city,id', 'car' => $callback ? 'nullable' : 'nullable|exists:cars_car,id', 'comment' => 'nullable|string|max:2000', 'consent' => 'accepted', 'website' => 'nullable|size:0', 'source_token' => 'required|string', 'start_date' => 'nullable|date|after_or_equal:today', 'end_date' => 'nullable|date|after:start_date'], ['start_date.after_or_equal' => site_text('Дата получения не может быть в прошлом.'), 'end_date.after' => site_text('Дата возврата должна быть позже даты получения.')], array_combine(['name', 'phone', 'city', 'car', 'comment', 'consent', 'start_date', 'end_date', 'source_token', 'website'], array_map('site_text', ['Ваше имя', 'Телефон', 'Город', 'Автомобиль', 'Комментарий', 'Согласие на обработку данных', 'Дата получения', 'Дата возврата', 'Форма', 'Website'])));
         $v->after(function ($v) use ($r, $callback) {
             $digits = preg_replace('/\D/', '', (string) $r->phone);
             if (strlen($digits) < 10 || strlen($digits) > 15) {
                 $v->errors()->add('phone', site_text('Укажите номер телефона: от 10 до 15 цифр.'));
+            } elseif (str_starts_with($digits, '7') && strlen($digits) !== 11) {
+                $v->errors()->add('phone', site_text('Введите номер полностью: +7 (XXX) XXX-XX-XX.'));
             }if (! $callback) {
                 if ((bool) $r->start_date !== (bool) $r->end_date) {
                     $v->errors()->add('start_date', site_text('Укажите обе даты или оставьте их пустыми.'));
@@ -70,7 +72,7 @@ class BookingController extends Controller
         $r->session()->put('booking_success', true);
 
         if ($r->expectsJson()) {
-            return response()->json(['success' => true, 'message' => site_text('Спасибо! Заявка отправлена. Менеджер свяжется с вами для уточнения деталей.')]);
+            return response()->json(['success' => true, 'message' => site_text('Спасибо! Заявка отправлена. Менеджер свяжется с вами для уточнения деталей.'), 'detail' => site_text('Менеджер свяжется с вами для уточнения деталей.')]);
         }
 
         return redirect(language_url('/request-success/'));

@@ -1,0 +1,329 @@
+{
+  "date": "2026-10-08",
+  "scope": [
+    "context-preserving city switch",
+    "no public booking dates",
+    "conditions reading layout",
+    "full-width accessible form feedback",
+    "human localized validation",
+    "telephone mask"
+  ],
+  "phpunit": {
+    "tool": "phpunit",
+    "result": "passed",
+    "tests": 53,
+    "passed": 53,
+    "assertions": 2146,
+    "duration_ms": 226892
+  },
+  "url_verification": {
+    "verified_at": "2026-10-08",
+    "public_pages": 330,
+    "all_200": true,
+    "legacy_404": 27,
+    "apache_95_200": null,
+    "sitemaps": {
+      "cities": {
+        "entries": 12,
+        "duplicates": 0
+      },
+      "cars": {
+        "entries": 273,
+        "duplicates": 0
+      },
+      "categories": {
+        "entries": 15,
+        "duplicates": 0
+      },
+      "pages": {
+        "entries": 15,
+        "duplicates": 0
+      }
+    },
+    "duplicates": {
+      "ru-title": [],
+      "ru-description": [],
+      "ru-h1": [],
+      "kk-title": [],
+      "kk-description": [],
+      "kk-h1": [],
+      "en-title": [],
+      "en-description": [],
+      "en-h1": []
+    },
+    "errors": []
+  },
+  "chromium": {
+    "base": "http://127.0.0.1:8004",
+    "navigation": [
+      {
+        "width": 1440,
+        "language": "ru",
+        "section": "/rental-conditions/",
+        "url": "http://127.0.0.1:8004/rental-conditions/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "ru",
+        "section": "/contacts/",
+        "url": "http://127.0.0.1:8004/contacts/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "ru",
+        "section": "/cars/",
+        "url": "http://127.0.0.1:8004/cars/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "/kk",
+        "section": "/rental-conditions/",
+        "url": "http://127.0.0.1:8004/kk/rental-conditions/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "/kk",
+        "section": "/contacts/",
+        "url": "http://127.0.0.1:8004/kk/contacts/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "/kk",
+        "section": "/cars/",
+        "url": "http://127.0.0.1:8004/kk/cars/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "/en",
+        "section": "/rental-conditions/",
+        "url": "http://127.0.0.1:8004/en/rental-conditions/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "/en",
+        "section": "/contacts/",
+        "url": "http://127.0.0.1:8004/en/contacts/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "language": "/en",
+        "section": "/cars/",
+        "url": "http://127.0.0.1:8004/en/cars/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 1440,
+        "case": "ajax-filters-then-header-city",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "ru",
+        "section": "/rental-conditions/",
+        "url": "http://127.0.0.1:8004/rental-conditions/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "ru",
+        "section": "/contacts/",
+        "url": "http://127.0.0.1:8004/contacts/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "ru",
+        "section": "/cars/",
+        "url": "http://127.0.0.1:8004/cars/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "/kk",
+        "section": "/rental-conditions/",
+        "url": "http://127.0.0.1:8004/kk/rental-conditions/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "/kk",
+        "section": "/contacts/",
+        "url": "http://127.0.0.1:8004/kk/contacts/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "/kk",
+        "section": "/cars/",
+        "url": "http://127.0.0.1:8004/kk/cars/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "/en",
+        "section": "/rental-conditions/",
+        "url": "http://127.0.0.1:8004/en/rental-conditions/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "/en",
+        "section": "/contacts/",
+        "url": "http://127.0.0.1:8004/en/contacts/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "/en",
+        "section": "/cars/",
+        "url": "http://127.0.0.1:8004/en/cars/?city=ustkamenogorsk",
+        "passed": true
+      },
+      {
+        "width": 390,
+        "case": "ajax-filters-then-header-city",
+        "passed": true
+      }
+    ],
+    "forms": [],
+    "mask": [
+      {
+        "width": 1440,
+        "typed_pasted_national_country_international_backspace_clear": true
+      },
+      {
+        "width": 390,
+        "typed_pasted_national_country_international_backspace_clear": true
+      }
+    ],
+    "conditions": [
+      {
+        "width": 1440,
+        "heading_x": 80,
+        "content_x": 80,
+        "copy_width": 920,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "heading_x": 20,
+        "content_x": 20,
+        "copy_width": 350,
+        "passed": true
+      }
+    ],
+    "errors": []
+  },
+  "request_notifications": {
+    "cases": [
+      {
+        "width": 1440,
+        "language": "ru",
+        "error_message": "!\nПроверьте данные\n\nИсправьте отмеченные поля и отправьте заявку ещё раз.",
+        "success_message": "Заявка отправлена\n\nМенеджер свяжется с вами для уточнения деталей.",
+        "error_width": 358.8125,
+        "form_width": 358.8125,
+        "success_height": 107.875,
+        "same_page": true,
+        "passed": true
+      },
+      {
+        "width": 390,
+        "language": "ru",
+        "error_message": "!\nПроверьте данные\n\nИсправьте отмеченные поля и отправьте заявку ещё раз.",
+        "success_message": "Заявка отправлена\n\nМенеджер свяжется с вами для уточнения деталей.",
+        "error_width": 300,
+        "form_width": 300,
+        "success_height": 103.875,
+        "same_page": true,
+        "passed": true
+      }
+    ],
+    "js_errors": []
+  },
+  "live_conditions": {
+    "url": "https://legionautorent.kz/rental-conditions/",
+    "status": 404,
+    "in_home_menu": false,
+    "in_sitemap": false,
+    "rebuild_page_kept": true
+  },
+  "screenshots": "output/city-form-fixes/",
+  "test_leads_database": "legion_test only",
+  "untested": [
+    "Physical iPhone and Android devices",
+    "This change has not been deployed to PS.kz"
+  ],
+  "firefox_webkit": {
+    "cases": [
+      {
+        "browser": "firefox",
+        "width": 1440,
+        "phone_typing_paste_backspace_city_kept_section": true
+      },
+      {
+        "browser": "firefox",
+        "width": 390,
+        "phone_typing_paste_backspace_city_kept_section": true
+      },
+      {
+        "browser": "webkit",
+        "width": 1440,
+        "phone_typing_paste_backspace_city_kept_section": true
+      },
+      {
+        "browser": "webkit",
+        "width": 390,
+        "phone_typing_paste_backspace_city_kept_section": true
+      }
+    ],
+    "errors": [
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n"
+    ],
+    "external_map_errors": [
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n",
+      "/yandex.ru\" from accessing a frame with origin \"http://127.0.0.1:8004\".  The frame requesting access has a protocol of \"https\", the frame being accessed has a protocol of \"http\". Protocols must match.\n"
+    ],
+    "application_errors": [],
+    "note": "On local HTTP, WebKit reports cross-origin access attempts from the external HTTPS Yandex map. All four navigation/mask scenarios pass; no application JavaScript errors. Recheck the external map on the deployed HTTPS origin."
+  }
+}

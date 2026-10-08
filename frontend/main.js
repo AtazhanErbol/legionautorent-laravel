@@ -4,6 +4,8 @@ import './mercedes-preview.css';
 import './refinements.css';
 import {initPageMotion} from './page-motion.js';
 import {initGarageUI} from './night-garage.js';
+import {initPhoneMasks} from './phone-mask.js';
+initPhoneMasks();
 initGarageUI();
 const $=(selector,root=document)=>root.querySelector(selector);
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -60,17 +62,25 @@ document.querySelectorAll('[data-request-form]').forEach(form=>form.addEventList
   const button=$('button[type=submit]',form);if(button.disabled)return;
   button.disabled=true;button.setAttribute('aria-busy','true');
   const feedback=$('[data-request-feedback]',form);
+  const showFeedback=(state,message)=>{
+    feedback.dataset.state=state;
+    $('[data-request-feedback-title]',feedback).textContent=state==='success'?form.dataset.successTitle:form.dataset.errorTitle;
+    $('[data-request-feedback-message]',feedback).textContent=message;
+    feedback.setAttribute('role',state==='error'?'alert':'status');
+    feedback.hidden=false;
+  };
   feedback.hidden=true;form.querySelectorAll('.request-field-error').forEach(el=>el.remove());
   form.querySelectorAll('[aria-invalid]').forEach(el=>{el.removeAttribute('aria-invalid');el.removeAttribute('aria-describedby');});
   try{
     const response=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json','X-Requested-With':'XMLHttpRequest'},credentials:'same-origin'});
     const data=await response.json();
     if(response.ok&&data.success){
-      feedback.textContent=data.message;feedback.dataset.state='success';
+      showFeedback('success',data.detail||data.message);
+      feedback.focus({preventScroll:true});
       form.querySelectorAll('.field,.consent-field,button[type=submit]').forEach(el=>el.hidden=true);
       window.dataLayer.push({event:'submit_request',page:location.pathname});
     }else{
-      feedback.textContent=data.message||form.dataset.error;feedback.dataset.state='error';
+      showFeedback('error',data.errors&&!data.errors._global&&response.status===400?form.dataset.invalid:(data.message||form.dataset.error));
       Object.entries(data.errors||{}).forEach(([name,messages])=>{
         const input=form.elements.namedItem(name);if(!input||!input.insertAdjacentElement)return;
         const error=document.createElement('p');error.className='request-field-error';error.id=`${input.id}-error`;error.textContent=messages[0];
@@ -78,7 +88,7 @@ document.querySelectorAll('[data-request-form]').forEach(form=>form.addEventList
       });
       form.querySelector('[aria-invalid]')?.focus({preventScroll:true});
     }
-  }catch{feedback.textContent=form.dataset.error;feedback.dataset.state='error';}
+  }catch{showFeedback('error',form.dataset.error);}
   finally{feedback.hidden=false;button.disabled=false;button.removeAttribute('aria-busy');}
 }));
 document.querySelectorAll('[data-gallery]').forEach(gallery=>{
@@ -113,8 +123,7 @@ document.querySelectorAll('[data-gallery]').forEach(gallery=>{
 const booking=$('[data-car-booking]');
 if(booking){
   const update=()=>{
-    const start=$('[name=start_date]',booking)?.value,end=$('[name=end_date]',booking)?.value;
-    const message=[booking.dataset.message,booking.dataset.city,start&&`${start}${end?' — '+end:''}`].filter(Boolean).join(' ');
+    const message=[booking.dataset.message,booking.dataset.city].filter(Boolean).join(' ');
     const href=`https://wa.me/${booking.dataset.whatsapp.replace(/\D/g,'')}?text=${encodeURIComponent(message)}`;
     $('[data-car-wa]',booking).href=href;const mobile=$('[data-mobile-wa]');if(mobile)mobile.href=href;
   };booking.addEventListener('change',update);update();
@@ -133,12 +142,19 @@ if(filters&&window.fetch){
       const html=await response.text();result.innerHTML=html;initFleets(result);
       const city=response.headers.get('X-Legion-Selected-City');
       const option=[...($('[name=city]',filters)?.options||[])].find(item=>item.value===city);
-      if(city&&option){
-        $('[data-city-label]').textContent=option.textContent;
+      if(city!==null){
+        const label=$('[data-city-label]');
+        label.textContent=city&&option?option.textContent:label.dataset.emptyLabel;
         const home=response.headers.get('X-Legion-Home');
         if(home)document.querySelectorAll('[data-city-home]').forEach(link=>link.href=home);
-        document.querySelectorAll('[data-site-nav]').forEach(link=>{const href=new URL(link.href);if(href.pathname.endsWith('/cars/')||href.pathname.includes('/cars/category/')){href.searchParams.set('city',city);link.href=href;}});
+        document.querySelectorAll('[data-site-nav]').forEach(link=>{const href=new URL(link.href);if(href.pathname.endsWith('/cars/')){city?href.searchParams.set('city',city):href.searchParams.delete('city');link.href=href;}});
       }
+      const current=new URL(url,location.href);
+      document.querySelectorAll('[data-city-switch]').forEach(link=>{
+        const href=new URL(link.href);href.search='';
+        ['min_price','max_price','sort'].forEach(key=>{if(current.searchParams.has(key))href.searchParams.set(key,current.searchParams.get(key));});
+        href.searchParams.set('city',link.dataset.citySwitch);link.href=href;
+      });
       if(push)history.pushState(null,'',url);$('meta[name=robots]').content='noindex,follow';
     }catch(error){if(error.name!=='AbortError')location.href=url;}finally{result.removeAttribute('aria-busy');}
   };
