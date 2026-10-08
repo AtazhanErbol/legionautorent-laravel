@@ -369,5 +369,13 @@
       "image_width": 349,
       "opacity": "1"
     }
+  },
+  "github_ci": {
+    "id": 37777581477,
+    "name": "Laravel verification",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/AtazhanErbol/legionautorent-laravel/actions/runs/37777581477",
+    "sha": "22c9ab23378e308772b882ce7090bda0bcfce7b0"
   }
 }

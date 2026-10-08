@@ -51,7 +51,7 @@ Runtime Docker — отдельный том, snapshot монтируется т
 
 Локальный Docker-предпросмотр: http://127.0.0.1:8004/; нативный: http://127.0.0.1:8003/. Админка: /control-legion/.
 
-Публичный PS.kz пока не развёрнут: доступы, тариф, PHP 8.4, домен и HTTPS проверяются на реальном сервере. Отдельный репозиторий — [legionautorent-laravel](https://github.com/AtazhanErbol/legionautorent-laravel), ветка main. Django main не заменяется. Результат удалённого CI фиксируется в RELEASE_CHECKLIST.md после публикации.
+Публичный PS.kz пока не развёрнут: доступы, тариф, PHP 8.4, домен и HTTPS проверяются на реальном сервере. Отдельный репозиторий — [legionautorent-laravel](https://github.com/AtazhanErbol/legionautorent-laravel), ветка main. Django main не заменяется. Удалённый [CI](https://github.com/AtazhanErbol/legionautorent-laravel/actions/runs/37777581477) успешно выполнил чистую установку Composer, npm build и полный PHPUnit на Linux.
 
 Мобильный Lighthouse — 96–97, компьютер — 100: целевые 98–99 пока не достигнуты. Реальные iPhone/Android, адресная строка мобильного браузера, полевая INP, публичные заявки и аналитика после деплоя ещё не проверены. Проверка ffprobe выполнена в Docker; для нативных новых видео-загрузок потребуется настроенный FFPROBE_PATH. Ролик/кадры сохранены, скорость отрисовки любого телефона не гарантируется.
 

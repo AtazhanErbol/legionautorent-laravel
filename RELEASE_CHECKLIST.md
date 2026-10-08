@@ -21,6 +21,7 @@
 | --- | --- |
 | PHPUnit | 47 тестов, 1966 утверждений, PASS; только изолированная legion_test |
 | Pint | PASS |
+| GitHub CI из чистой Linux-копии | Composer, npm build, PHPUnit — PASS; [протокол](https://github.com/AtazhanErbol/legionautorent-laravel/actions/runs/37777581477) |
 | Общий URL/SEO-обход | 330 страниц, все 200; нет ошибок canonical/H1/перевода |
 | Исходные адреса | 95/95 — 200 без редиректов у нового посетителя; Nginx и Apache |
 | Legacy 500 | 27/27 локально 404, исключены из sitemap |
@@ -35,7 +36,7 @@
 | Docker | app/web build, optimize, Filament optimize, Nginx config, health endpoint |
 | Lighthouse | Мобильный 96–97, компьютер 100; CLS 0 |
 
-Подробности: reports/release-verification.json, reports/final-url-seo-check.json, reports/seo-live-audit.json. Скриншоты первого экрана, карточки/города/форм, админки и hero на пяти позициях — локально в output/admin-release/. В Git нет тестовых загруженных фотографий; рабочие записи/медиа не заменялись тестовыми.
+Подробности: reports/release-verification.json, reports/final-url-seo-check.json, reports/seo-live-audit.json. Скриншоты первого экрана, карточки/города/форм, админки и hero на пяти позициях — локально в output/admin-release/. В Git нет тестовых загруженных фотографий; рабочие записи/медиа не заменялись тестовыми. PHPUnit использует поддельный media-диск с генерируемыми изображениями. Пустые runtime-каталоги сохранены через .gitignore-маркеры, поэтому Composer запускается после чистого git clone.
 
 ## Что ещё проверяется при настоящем размещении
 
@@ -45,3 +46,5 @@
 - GTM: подтвердить Метрику 92545653 и GA4 G-00P3VJTEK9 внутри контейнера, проверить события после включения аналитики.
 
 Инструкция: DEPLOY_PS_KZ.md. После проверки настоящего домена снять staging/noindex. Фото и частный снимок передаются отдельно; одна только Git-копия не содержит личные данные и фотографии автопарка.
+
+Версия приложения проверена удалённым CI на commit `22c9ab23378e308772b882ce7090bda0bcfce7b0`. После этой проверки изменена только документация результатов.
