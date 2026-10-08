@@ -38,6 +38,8 @@ cp .env.production.example .env
 
 ## 4. Установка и импорт
 
+Каталоги кеша/сессий/Blade включены в Git через .gitignore-маркеры. Перед Composer проверить их наличие и доступ PHP на запись в storage и bootstrap/cache.
+
 Команды выполняются из корня проекта:
 
 ```bash

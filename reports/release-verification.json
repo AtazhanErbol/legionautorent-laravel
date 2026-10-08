@@ -340,5 +340,21 @@
     "en-title": [],
     "en-description": [],
     "en-h1": []
-  }
+  },
+  "catalog_controls": [
+    {
+      "width": 1440,
+      "show_more": true,
+      "sorting": true,
+      "price_filter": true,
+      "city_retained": true
+    },
+    {
+      "width": 390,
+      "show_more": true,
+      "sorting": true,
+      "price_filter": true,
+      "city_retained": true
+    }
+  ]
 }
