@@ -61,6 +61,9 @@ class CmsValidation
         if ($m instanceof SiteSettings && $m->gtm_id && ! preg_match('/^GTM-[A-Z0-9]+$/', $m->gtm_id)) {
             self::fail('gtm_id', 'Укажите GTM-...');
         }
+        if ($m instanceof Page && ! $m->path) {
+            $m->path = '/'.$m->slug.'/';
+        }
         if ($m instanceof Car) {
             if (! $m->legacy_path) {
                 $m->legacy_path = '/car/'.$m->slug;
@@ -76,6 +79,19 @@ class CmsValidation
         foreach (['legacy_path', 'path', 'old_path', 'new_path'] as $key) {
             if (isset($m->getAttributes()[$key]) && $m->$key && ! self::path($m->$key)) {
                 self::fail($key, 'Нужен локальный адрес без домена, query и fragment.');
+            }
+        }
+        if ($m instanceof Page || $m instanceof City || $m instanceof Car) {
+            $pathKey = $m instanceof Page ? 'path' : 'legacy_path';
+            if ($m->isDirty($pathKey)) {
+                $path = $m->$pathKey;
+                $conflict = collect([Car::class => 'legacy_path', City::class => 'legacy_path', Page::class => 'path'])
+                    ->contains(fn (string $column, string $model): bool => $model::where($column, $path)->when($m instanceof $model, fn ($query) => $query->where('id', '!=', $m->id ?? 0))->exists());
+                $reserved = ['/cars/', '/faq/', '/booking/', '/callback/', '/request-success/', '/healthz/', '/robots.txt', '/sitemap.xml'];
+                $installingSystemPage = $m instanceof Page && app()->runningInConsole() && request()->attributes->get('legion.installing_system_pages') === true;
+                if ($conflict || (! $installingSystemPage && (! $m->exists || $m->getOriginal($pathKey) !== $path) && in_array($path, $reserved)) || Redirect::where('old_path', $path)->where('active', true)->exists()) {
+                    self::fail($pathKey, 'Этот адрес уже занят. Измените slug или укажите другой адрес страницы.');
+                }
             }
         }
         if ($m->canonical_url && $m->canonical_url !== config('legion.site_url').$m->getAbsoluteUrl()) {

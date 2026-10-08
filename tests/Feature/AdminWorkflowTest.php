@@ -44,7 +44,7 @@ class AdminWorkflowTest extends CatalogueTestCase
         $component = Livewire::test(CreateCar::class)->fillForm([
             'name' => 'Тестовый автомобиль', 'slug' => 'test-car-unified-form',
             'brand_id' => $example->brand_id, 'category_id' => $example->category_id,
-            'cities' => [$example->cities->first()->id], 'base_price' => 45000,
+            'cities' => $example->cities->first()->id, 'base_price' => 45000,
             'images' => ['new-photo' => ['original' => [], 'alt' => 'Фото тестового автомобиля', 'is_main' => true]],
             'discounts' => [
                 'first' => ['label' => '3–7 дней', 'min_days' => 3, 'max_days' => 7, 'percent' => 10],

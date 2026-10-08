@@ -3,8 +3,11 @@
 namespace App\Filament;
 
 use App\Models\BookingRequest;
+use App\Models\Car;
 use App\Models\CarImage;
+use App\Models\City;
 use App\Models\ContentType;
+use App\Models\Page;
 use App\Models\SiteSettings;
 use App\Models\Translation;
 use Closure;
@@ -125,6 +128,12 @@ class CmsFields
                 $field->default($f['default']);
             }if ($f['unique']) {
                 $field->unique(ignoreRecord: true);
+            }
+            if (($model === Page::class && $n === 'path') || (in_array($model, [Car::class, City::class]) && $n === 'legacy_path')) {
+                $prefix = $model === Car::class ? '/car/' : '/';
+                $suffix = $model === Car::class ? '' : '/';
+                $field->required(false)->placeholder(fn (Get $get): string => $prefix.($get('slug') ?: 'slug').$suffix)
+                    ->helperText('Можно оставить пустым: адрес создастся из slug. Существующий адрес сохраняется; менять его следует вместе с SEO-перенаправлением.');
             }
             if ($model === BookingRequest::class && ! in_array($n, ['status', 'manager_note'])) {
                 $field->disabled()->dehydrated(false);

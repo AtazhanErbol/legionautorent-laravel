@@ -35,8 +35,13 @@ class PublishLocales extends Command
         $models = ['Car' => Car::class, 'CarImage' => CarImage::class, 'CarCategory' => CarCategory::class, 'City' => City::class, 'Page' => Page::class, 'ContentBlock' => ContentBlock::class, 'FAQ' => FAQ::class, 'SiteSettings' => SiteSettings::class];
         $count = 0;
         DB::transaction(function () use ($data, $interface, $models, &$count): void {
-            foreach ($data['system_pages'] as $row) {
-                Page::firstOrCreate(['path' => $row['path']], ['slug' => $row['slug'], 'title' => $row['title'], 'seo_title' => $row['title'].' | LEGIONAUTORENT', 'seo_h1' => $row['h1'], 'seo_description' => $row['description'], 'body' => '<p>'.$row['description'].'</p>', 'robots' => $row['noindex'] ? 'noindex,follow' : 'index,follow', 'active' => true, 'show_in_footer' => false]);
+            request()->attributes->set('legion.installing_system_pages', true);
+            try {
+                foreach ($data['system_pages'] as $row) {
+                    Page::firstOrCreate(['path' => $row['path']], ['slug' => $row['slug'], 'title' => $row['title'], 'seo_title' => $row['title'].' | LEGIONAUTORENT', 'seo_h1' => $row['h1'], 'seo_description' => $row['description'], 'body' => '<p>'.$row['description'].'</p>', 'robots' => $row['noindex'] ? 'noindex,follow' : 'index,follow', 'active' => true, 'show_in_footer' => false]);
+                }
+            } finally {
+                request()->attributes->remove('legion.installing_system_pages');
             }
             foreach ($data['source_fixes'] ?? [] as $row) {
                 $model = $models[$row['model']]::find($row['object']);

@@ -1,0 +1,295 @@
+{
+  "date": "2026-10-08",
+  "scope": [
+    "reuse discount sets or enter manually",
+    "one city selector without silently discarding imported links",
+    "remove duplicate model entry and suggest brand",
+    "explain visible class badge and featured sorting",
+    "generate optional page addresses from slug",
+    "one FAQ destination selector"
+  ],
+  "phpunit_full": {
+    "tool": "phpunit",
+    "result": "passed",
+    "tests": 65,
+    "passed": 65,
+    "assertions": 2269,
+    "duration_ms": 63148
+  },
+  "phpunit_final_form_checks": {
+    "tool": "phpunit",
+    "result": "passed",
+    "tests": 24,
+    "passed": 24,
+    "assertions": 236,
+    "duration_ms": 21046
+  },
+  "authoring_browser_phases": {
+    "database": "legion_test",
+    "cases": [
+      {
+        "case": "desktop-create-PNG-3MB-car-with-discount",
+        "passed": true
+      },
+      {
+        "case": "mobile-JPEG-upload-main-photo-switch",
+        "passed": true,
+        "overflow": false
+      },
+      {
+        "case": "mobile-reopen-two-photos",
+        "passed": true
+      },
+      {
+        "case": "mobile-dropdown-opaque-in-viewport",
+        "passed": true,
+        "details": {
+          "background": "rgb(25, 27, 24)",
+          "right": 332,
+          "width": 390
+        }
+      },
+      {
+        "case": "uploaded-car-public-photo-and-text",
+        "passed": true
+      },
+      {
+        "case": "cars-table-1440",
+        "passed": true
+      },
+      {
+        "case": "cars-table-390",
+        "passed": true
+      },
+      {
+        "case": "model-field-removed",
+        "passed": true
+      },
+      {
+        "case": "single-city-select",
+        "passed": true
+      },
+      {
+        "case": "apply-standard-four-discounts-edit-and-reopen",
+        "passed": true
+      },
+      {
+        "case": "mobile-discount-picker-no-overflow",
+        "passed": true
+      },
+      {
+        "case": "faq-only-one-destination-and-reopen-1440-390",
+        "passed": true
+      },
+      {
+        "case": "page-create-with-empty-automatic-address",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "js_errors": [],
+    "failed_http_responses": []
+  },
+  "docker_preview": {
+    "cases": [
+      {
+        "engine": "chromium",
+        "width": 1440,
+        "route": "cars/create",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 1440,
+        "route": "cars/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 1440,
+        "route": "faqs/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 1440,
+        "route": "pages/4/edit",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 390,
+        "route": "cars/create",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 390,
+        "route": "cars/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 390,
+        "route": "faqs/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "chromium",
+        "width": 390,
+        "route": "pages/4/edit",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 1440,
+        "route": "cars/create",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 1440,
+        "route": "cars/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 1440,
+        "route": "faqs/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 1440,
+        "route": "pages/4/edit",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 390,
+        "route": "cars/create",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 390,
+        "route": "cars/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 390,
+        "route": "faqs/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "firefox",
+        "width": 390,
+        "route": "pages/4/edit",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 1440,
+        "route": "cars/create",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 1440,
+        "route": "cars/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 1440,
+        "route": "faqs/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 1440,
+        "route": "pages/4/edit",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 390,
+        "route": "cars/create",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 390,
+        "route": "cars/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 390,
+        "route": "faqs/1/edit",
+        "passed": true
+      },
+      {
+        "engine": "webkit",
+        "width": 390,
+        "route": "pages/4/edit",
+        "passed": true
+      }
+    ],
+    "js_errors": [],
+    "console": [],
+    "bad_responses": [],
+    "base": "http://127.0.0.1:8004",
+    "mutations": "login only; records not edited",
+    "passed": true
+  },
+  "public_urls": {
+    "verified_at": "2026-10-08",
+    "public_pages": 330,
+    "all_200": true,
+    "legacy_404": 27,
+    "apache_95_200": null,
+    "sitemaps": {
+      "cities": {
+        "entries": 12,
+        "duplicates": 0
+      },
+      "cars": {
+        "entries": 273,
+        "duplicates": 0
+      },
+      "categories": {
+        "entries": 15,
+        "duplicates": 0
+      },
+      "pages": {
+        "entries": 15,
+        "duplicates": 0
+      }
+    },
+    "duplicates": {
+      "ru-title": [],
+      "ru-description": [],
+      "ru-h1": [],
+      "kk-title": [],
+      "kk-description": [],
+      "kk-h1": [],
+      "en-title": [],
+      "en-description": [],
+      "en-h1": []
+    },
+    "errors": []
+  },
+  "media": {
+    "archived_test_metadata": 6,
+    "media_files": 3893,
+    "media_bytes": 262181501
+  },
+  "docker_build": "passed; production configuration and caches verified; localhost:8004 health 200",
+  "notes": [
+    "No production catalogue edits were made during browser authoring checks.",
+    "Browser engines were tested at 1440 and 390 px; physical phones were not used.",
+    "Existing car prices, SEO and hero content were preserved."
+  ]
+}

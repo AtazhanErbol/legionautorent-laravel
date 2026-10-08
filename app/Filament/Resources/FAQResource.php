@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\FaqForm;
 use App\Filament\Resources\Pages\CreateFAQ;
 use App\Filament\Resources\Pages\EditFAQ;
 use App\Filament\Resources\Pages\ListFAQ;
 use App\Models\FAQ;
+use Filament\Schemas\Schema;
 
 class FAQResource extends CmsResource
 {
@@ -22,6 +24,11 @@ class FAQResource extends CmsResource
     protected static ?string $pluralModelLabel = 'Вопросы и ответы';
 
     protected static ?int $navigationSort = 11;
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema->components(FaqForm::schema())->columns(1);
+    }
 
     public static function getPages(): array
     {

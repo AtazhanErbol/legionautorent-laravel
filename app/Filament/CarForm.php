@@ -3,13 +3,20 @@
 namespace App\Filament;
 
 use App\Models\Car;
+use App\Models\CarBrand;
 use App\Models\CarDiscount;
 use App\Models\CarImage;
 use App\Models\CarPrice;
 use App\Models\CarSpecification;
 use App\Services\CmsValidation;
+use App\Services\DiscountPresets;
 use Closure;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -21,13 +28,53 @@ class CarForm
 {
     public static function schema(): array
     {
-        $main = CmsFields::inputs(Car::class, [], ['name', 'brand_id', 'model_name', 'category_id', 'cities', 'active', 'accepts_requests', 'featured', 'description']);
+        $main = CmsFields::inputs(Car::class, [], ['name', 'brand_id', 'category_id', 'cities', 'active', 'accepts_requests', 'featured', 'description']);
         foreach ($main as $field) {
             if ($field->getName() === 'cities') {
-                $field->required()->helperText('Выберите хотя бы один город, в котором можно арендовать автомобиль.');
+                $field->label('Город')->multiple(false)->dehydrated(false)->required()->rules(['integer'])->validationMessages(['integer' => 'Выберите один город.'])->live()
+                    ->afterStateUpdated(fn (Set $set) => $set('city_selection_changed', true))
+                    ->helperText(function (?Car $record): string {
+                        if ($record && $record->cities->count() > 1) {
+                            return 'Из прежнего сайта сохранены города: '.$record->cities->pluck('name')->implode(', ').'. Пока вы не меняете город, эти связи сохраняются. Выбор города оставит у машины только его.';
+                        }
+
+                        return 'Автомобиль появится в каталоге выбранного города. Можно выбрать один город.';
+                    })
+                    ->suffixAction(Action::make('keepSelectedCity')->label('Оставить только выбранный город')->icon('heroicon-o-map-pin')
+                        ->visible(fn (?Car $record): bool => $record !== null && $record->cities->count() > 1)
+                        ->requiresConfirmation()->modalHeading('Оставить автомобиль в одном городе?')
+                        ->modalDescription('После общего сохранения машина будет доступна только в выбранном городе. Её адрес, фотографии и SEO сохранятся.')
+                        ->action(fn (Set $set) => $set('city_selection_changed', true)))
+                    ->saveRelationshipsUsing(function (Select $component, Get $get): void {
+                        $record = $component->getRecord();
+                        $current = $record->cities()->pluck('locations_city.id');
+                        if ($current->count() > 1 && ! $get('city_selection_changed') && (string) $component->getState() === (string) $current->first()) {
+                            return;
+                        }
+                        $component->saveStateToRelationship();
+                    });
+            }
+            if ($field->getName() === 'brand_id') {
+                $field->label('Марка автомобиля')->helperText('Подставляется из названия, если марка распознана. Нужна для поисковиков; отдельного фильтра по маркам на сайте нет.');
+            }
+            if ($field->getName() === 'category_id') {
+                $field->label('Класс на карточке')->helperText('Показывается на фотографии в каталоге: например, «Бизнес». По нему также подбираются похожие автомобили.');
+            }
+            if ($field->getName() === 'featured') {
+                $field->label('Показывать первыми')->helperText('Поднимает машину в начале каталога при сортировке «Рекомендуемые». Отдельной рамки или значка не добавляет.');
             }
             if ($field->getName() === 'name') {
-                $field->live(onBlur: true)->afterStateUpdated(function (?string $state, string $operation, Get $get, Set $set): void {
+                $field->helperText('Например: Toyota Camry XV 80. Отдельное поле модели заполнять не нужно.')->live(onBlur: true)->afterStateUpdated(function (?string $state, string $operation, Get $get, Set $set): void {
+                    if ($operation === 'create' && ! $get('brand_id')) {
+                        $name = mb_strtolower(trim($state ?? ''));
+                        foreach (CarBrand::query()->get(['id', 'name']) as $brand) {
+                            $brandName = mb_strtolower($brand->name);
+                            if ($name === $brandName || str_starts_with($name, $brandName.' ')) {
+                                $set('brand_id', $brand->id);
+                                break;
+                            }
+                        }
+                    }
                     if ($operation === 'create' && ! $get('slug')) {
                         $set('slug', Str::slug($state ?? ''));
                         $set('seo_title', $state);
@@ -36,6 +83,10 @@ class CarForm
                 });
             }
         }
+
+        $order = array_flip(['name', 'cities', 'brand_id', 'category_id', 'description', 'active', 'accepts_requests', 'featured']);
+        usort($main, fn ($first, $second): int => $order[$first->getName()] <=> $order[$second->getName()]);
+        $main[] = Hidden::make('city_selection_changed')->default(false)->dehydrated(false);
 
         $photos = self::related('images', CarImage::class, ['car_id', 'legacy_url', 'sort_order'])
             ->label('Галерея автомобиля')->addActionLabel('Добавить фотографию')
@@ -57,15 +108,15 @@ class CarForm
         $discounts = self::related('discounts', CarDiscount::class, ['car_id'])
             ->label('Скидки по сроку аренды')->addActionLabel('Добавить скидку')
             ->itemLabel(fn (array $state): string => ($state['label'] ?? '') ?: 'Скидка')
-            ->helperText('Например: от 7 до 14 дней — 10%. Диапазоны не должны пересекаться; соседние могут иметь общую границу, как на исходном сайте. Дополнительные тарифы и скидки выводятся отдельно.')
+            ->helperText('Можно заполнить вручную или применить готовый набор выше. После применения все строки можно изменить. Пустое «До дней» означает любой больший срок. Соседние диапазоны могут иметь общую границу.')
             ->rules([self::rangeRule()]);
 
         return [Tabs::make('Карточка автомобиля')->persistTabInQueryString('tab')->columnSpanFull()->tabs([
-            Tab::make('Автомобиль')->schema([Section::make('Основные данные')->description('Название, города, публикация и описание для посетителей.')->schema($main)->columns(['default' => 1, 'lg' => 2])]),
+            Tab::make('Автомобиль')->schema([Section::make('Основные данные')->description('Название, один город, описание и показ автомобиля на сайте.')->schema($main)->columns(['default' => 1, 'lg' => 2])]),
             Tab::make('Фотографии')->schema([$photos]),
             Tab::make('Цены и скидки')->schema([
                 Section::make('Основная цена')->schema(CmsFields::inputs(Car::class, [], ['base_price', 'deposit', 'mileage_limit']))->columns(['default' => 1, 'lg' => 3]),
-                $prices, $discounts,
+                $prices, self::discountPicker(), $discounts,
             ]),
             Tab::make('Характеристики')->schema([
                 Section::make('Параметры автомобиля')->schema(CmsFields::inputs(Car::class, [], ['year', 'engine', 'transmission', 'drive', 'seats', 'doors', 'color', 'fuel', 'features']))->columns(['default' => 1, 'lg' => 2]),
@@ -80,10 +131,65 @@ class CarForm
         ])];
     }
 
+    private static function discountPicker(): Section
+    {
+        return Section::make('Как заполнить скидки')->description('Используйте уже сохранённые скидки или добавьте свои. Основная цена и тарифы не изменятся.')->schema([
+            Radio::make('discount_mode')->label('Способ заполнения')
+                ->options(['preset' => 'Выбрать готовый набор', 'manual' => 'Заполнить вручную'])
+                ->default(fn (?Car $record): string => $record ? 'manual' : 'preset')->inline()->live()->dehydrated(false)
+                ->afterStateHydrated(function (Radio $component, ?Car $record): void {
+                    if (blank($component->getState())) {
+                        $component->state($record ? 'manual' : 'preset');
+                    }
+                })
+                ->afterStateUpdated(function (?string $state, Get $get, Set $set): void {
+                    if ($state === 'preset' && blank($get('discount_preset'))) {
+                        $set('discount_preset', array_key_first(DiscountPresets::options()));
+                    }
+                }),
+            Select::make('discount_preset')->label('Готовый набор скидок')
+                ->options(fn (): array => DiscountPresets::options())
+                ->default(fn (): ?string => array_key_first(DiscountPresets::options()))
+                ->native(false)->searchable()->live()->dehydrated(false)->columnSpanFull()
+                ->visible(fn (Get $get): bool => $get('discount_mode') === 'preset')
+                ->helperText('Наборы берутся из сохранённых карточек и не дублируются. Сохраните свои скидки у машины — их можно будет выбрать для других машин.'),
+            Actions::make([
+                Action::make('applyDiscountPreset')->label('Применить набор')->icon('heroicon-o-document-duplicate')
+                    ->disabled(fn (Get $get): bool => blank($get('discount_preset')) || ! self::canApplyPreset())
+                    ->requiresConfirmation(fn (Get $get): bool => count($get('discounts') ?? []) > 0)
+                    ->modalHeading('Заменить скидки в этой карточке?')
+                    ->modalDescription('Изменятся только строки скидок в форме. Другие автомобили не затронуты. Для записи изменений нажмите общую кнопку «Сохранить».')
+                    ->action(function (Get $get, Set $set): void {
+                        abort_unless(self::canApplyPreset(), 403);
+                        $keys = array_keys($get('discounts') ?? []);
+                        $rows = [];
+                        foreach (DiscountPresets::rows((string) $get('discount_preset')) as $index => $row) {
+                            $rows[$keys[$index] ?? (string) Str::uuid()] = $row;
+                        }
+                        $set('discounts', $rows);
+                    }),
+            ])->key('discountPresetActions')->visible(fn (Get $get): bool => $get('discount_mode') === 'preset'),
+        ])->columnSpanFull();
+    }
+
+    private static function canApplyPreset(): bool
+    {
+        foreach (['change', 'add', 'delete'] as $permission) {
+            if (! (auth()->user()?->hasCmsPermission($permission, 'CarDiscount') ?? false)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private static function related(string $relationship, string $model, array $except): Repeater
     {
         $fields = CmsFields::inputs($model, $except);
         foreach ($fields as $field) {
+            if ($model === CarDiscount::class && $field->getName() === 'label') {
+                $field->label('Название скидки')->helperText('Например: «7–15 дней» или «Длительная аренда».');
+            }
             if (in_array($field->getName(), ['min_days', 'daily_price', 'percent'])) {
                 $field->minValue(1);
             }

@@ -8,4 +8,9 @@ use App\Filament\Resources\Pages\CmsCreateRecord as CreateRecord;
 class CreatePage extends CreateRecord
 {
     protected static string $resource = PageResource::class;
+
+    public function getHeading(): string
+    {
+        return 'Новая страница';
+    }
 }
