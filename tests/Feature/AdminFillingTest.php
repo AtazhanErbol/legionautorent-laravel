@@ -54,12 +54,46 @@ class AdminFillingTest extends CatalogueTestCase
         $this->assertSame(10, Car::where('id', '!=', $car->id)->first()->discounts()->first()->percent);
     }
 
-    public function test_brand_is_suggested_without_a_separate_model_field(): void
+    public function test_classification_fields_are_removed_and_brand_is_detected_when_saving(): void
     {
         $brand = CarBrand::where('name', 'Toyota')->firstOrFail();
+        $city = City::where('slug', 'kostanay')->firstOrFail();
         Livewire::test(CreateCar::class)->assertFormFieldDoesNotExist('model_name')
-            ->set('data.name', 'Toyota Camry XV 80')
-            ->assertFormSet(['brand_id' => $brand->id, 'slug' => 'toyota-camry-xv-80']);
+            ->assertFormFieldDoesNotExist('brand_id')->assertFormFieldDoesNotExist('category_id')->assertFormFieldDoesNotExist('features')
+            ->set('data.name', 'Toyota Camry Admin Check')->assertFormSet(['slug' => 'toyota-camry-admin-check'])
+            ->fillForm(['cities' => $city->id, 'base_price' => 40000, 'active' => true])->call('create')->assertHasNoFormErrors();
+        $car = Car::where('slug', 'toyota-camry-admin-check')->firstOrFail();
+        $this->assertSame($brand->id, $car->brand_id);
+        $this->assertNull($car->category_id);
+        $response = $this->get($car->legacy_path)->assertOk();
+        $response->assertSee('Toyota Camry Admin Check');
+        preg_match_all('#<script type="application/ld\+json"[^>]*>(.*?)</script>#s', $response->getContent(), $scripts);
+        $vehicle = collect($scripts[1])->map(fn (string $json): array => json_decode($json, true))->first(fn (array $node): bool => is_array($node['@type'] ?? null) && in_array('Vehicle', $node['@type']));
+        $this->assertSame('Toyota', $vehicle['brand']['name']);
+    }
+
+    public function test_an_unknown_brand_without_a_class_is_public_and_can_be_edited(): void
+    {
+        $city = City::where('slug', 'kostanay')->firstOrFail();
+        Livewire::test(CreateCar::class)->fillForm([
+            'name' => 'Новый автомобиль без классификации', 'slug' => 'no-classification', 'cities' => $city->id,
+            'base_price' => 30000, 'active' => true,
+        ])->call('create')->assertHasNoFormErrors();
+        $car = Car::where('slug', 'no-classification')->firstOrFail();
+        $this->assertNull($car->brand_id);
+        $this->assertNull($car->category_id);
+        $this->assertTrue(Car::public()->whereKey($car->id)->exists());
+        $response = $this->get($car->legacy_path)->assertOk()->assertSee('Новый автомобиль без классификации');
+        preg_match_all('#<script type="application/ld\+json"[^>]*>(.*?)</script>#s', $response->getContent(), $scripts);
+        $vehicle = collect($scripts[1])->map(fn (string $json): array => json_decode($json, true))->first(fn (array $node): bool => is_array($node['@type'] ?? null) && in_array('Vehicle', $node['@type']));
+        $this->assertArrayNotHasKey('brand', $vehicle);
+        $this->get('/cars/?city=kostanay')->assertOk()->assertSee('Новый автомобиль без классификации')->assertSee('/car/no-classification');
+        $this->get($city->legacy_path)->assertOk()->assertSee('Новый автомобиль без классификации');
+        $this->get('/sitemap-cars.xml')->assertOk()->assertSee('/car/no-classification');
+        Livewire::test(EditCar::class, ['record' => $car->id])->fillForm(['description' => 'Новое описание.'])->call('save')->assertHasNoFormErrors();
+        $this->assertNull($car->fresh()->brand_id);
+        $this->assertNull($car->fresh()->category_id);
+        $this->get($car->legacy_path)->assertOk()->assertSee('Новое описание.');
     }
 
     public function test_discount_copy_is_disabled_without_permission_to_replace_rows(): void
@@ -77,8 +111,8 @@ class AdminFillingTest extends CatalogueTestCase
     {
         $example = Car::with('cities')->first();
         $component = Livewire::test(CreateCar::class)->fillForm([
-            'name' => 'Новая Toyota', 'slug' => 'ready-discounts-test', 'brand_id' => $example->brand_id,
-            'category_id' => $example->category_id, 'cities' => $example->cities->first()->id,
+            'name' => 'Новая Toyota', 'slug' => 'ready-discounts-test',
+            'cities' => $example->cities->first()->id,
             'base_price' => 40000, 'discount_mode' => 'preset', 'discount_preset' => array_key_first(DiscountPresets::options()),
         ])->callAction(TestAction::make('applyDiscountPreset')->schemaComponent('discountPresetActions'));
         $this->assertCount(4, $component->get('data.discounts'));
@@ -93,8 +127,8 @@ class AdminFillingTest extends CatalogueTestCase
     {
         $example = Car::first();
         Livewire::test(CreateCar::class)->fillForm([
-            'name' => 'Неверный город', 'slug' => 'multiple-cities-rejected', 'brand_id' => $example->brand_id,
-            'category_id' => $example->category_id, 'cities' => City::limit(2)->pluck('id')->all(), 'base_price' => 40000,
+            'name' => 'Неверный город', 'slug' => 'multiple-cities-rejected',
+            'cities' => City::limit(2)->pluck('id')->all(), 'base_price' => 40000,
         ])->call('create')->assertHasFormErrors(['cities']);
         $this->assertFalse(Car::where('slug', 'multiple-cities-rejected')->exists());
     }
@@ -103,8 +137,10 @@ class AdminFillingTest extends CatalogueTestCase
     {
         $car = Car::has('cities', '>', 1)->with('cities')->firstOrFail();
         $cities = $car->cities->pluck('id')->all();
+        $classification = [$car->brand_id, $car->category_id];
         Livewire::test(EditCar::class, ['record' => $car->id])->fillForm(['description' => 'Описание обновлено.'])->call('save')->assertHasNoFormErrors();
         $this->assertSame($cities, $car->fresh()->cities->pluck('id')->all());
+        $this->assertSame($classification, [$car->fresh()->brand_id, $car->fresh()->category_id]);
         $selected = City::whereNotIn('id', $cities)->firstOrFail();
         Livewire::test(EditCar::class, ['record' => $car->id])->fillForm(['cities' => $selected->id])->call('save')->assertHasNoFormErrors();
         $this->assertSame([$selected->id], $car->fresh()->cities->pluck('id')->all());

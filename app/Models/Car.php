@@ -55,6 +55,8 @@ class Car extends CmsModel
 
     public function scopePublic(Builder $q): Builder
     {
-        return $q->where('active', true)->whereHas('category', fn ($c) => $c->where('active', true))->whereHas('cities', fn ($c) => $c->where('active', true));
+        return $q->where('active', true)
+            ->where(fn (Builder $query): Builder => $query->whereNull('category_id')->orWhereHas('category', fn (Builder $category): Builder => $category->where('active', true)))
+            ->whereHas('cities', fn (Builder $city): Builder => $city->where('active', true));
     }
 }

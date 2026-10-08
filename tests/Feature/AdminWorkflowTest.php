@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\CarBrandResource;
+use App\Filament\Resources\CarCategoryResource;
 use App\Filament\Resources\CarDiscountResource;
+use App\Filament\Resources\CarFeatureResource;
 use App\Filament\Resources\CarImageResource;
 use App\Filament\Resources\CarPriceResource;
 use App\Filament\Resources\CarSpecificationResource;
@@ -32,7 +35,7 @@ class AdminWorkflowTest extends CatalogueTestCase
 
     public function test_child_sections_do_not_clutter_the_navigation(): void
     {
-        foreach ([CarImageResource::class, CarDiscountResource::class, CarPriceResource::class, CarSpecificationResource::class] as $resource) {
+        foreach ([CarImageResource::class, CarDiscountResource::class, CarPriceResource::class, CarSpecificationResource::class, CarBrandResource::class, CarCategoryResource::class, CarFeatureResource::class] as $resource) {
             $this->assertFalse($resource::shouldRegisterNavigation());
         }
     }
@@ -43,7 +46,6 @@ class AdminWorkflowTest extends CatalogueTestCase
         $example = Car::with('cities')->first();
         $component = Livewire::test(CreateCar::class)->fillForm([
             'name' => 'Тестовый автомобиль', 'slug' => 'test-car-unified-form',
-            'brand_id' => $example->brand_id, 'category_id' => $example->category_id,
             'cities' => $example->cities->first()->id, 'base_price' => 45000,
             'images' => ['new-photo' => ['original' => [], 'alt' => 'Фото тестового автомобиля', 'is_main' => true]],
             'discounts' => [

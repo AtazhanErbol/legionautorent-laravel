@@ -45,17 +45,15 @@ class CarResource extends CmsResource
 
     public static function table(Table $table): Table
     {
-        return $table->modifyQueryUsing(fn ($query) => $query->with(['images', 'cities', 'category']))->columns([
+        return $table->modifyQueryUsing(fn ($query) => $query->with(['images', 'cities']))->columns([
             ImageColumn::make('main_image.card_image')->label('Фото')->disk('media')->imageWidth(88)->imageHeight(56),
             TextColumn::make('name')->label('Автомобиль')->searchable()->forceSearchCaseInsensitive()->sortable()->description(fn (Car $record): string => $record->legacy_path),
             TextColumn::make('cities.name')->label('Города')->badge(),
-            TextColumn::make('category.name')->label('Класс')->toggleable(),
             TextColumn::make('base_price')->label('Цена / сутки')->numeric(decimalPlaces: 0, thousandsSeparator: ' ')->suffix(' ₸')->sortable(),
             IconColumn::make('active')->label('На сайте')->boolean(),
             TextColumn::make('sort_order')->label('Порядок')->toggleable(isToggledHiddenByDefault: true),
         ])->filters([
             SelectFilter::make('cities')->label('Город')->relationship('cities', 'name')->preload(),
-            SelectFilter::make('category')->label('Класс')->relationship('category', 'name')->preload(),
             TernaryFilter::make('active')->label('Опубликовано'),
         ])->recordActions([EditAction::make()->label('Открыть карточку')])->paginated([25, 50, 100])->defaultSort('sort_order')->reorderable('sort_order');
     }

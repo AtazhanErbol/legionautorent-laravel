@@ -97,7 +97,10 @@ class Seo
         }
         if ($car) {
             $offer = ['@type' => 'Offer', 'url' => $seo['canonical'], 'price' => (string) $car->base_price, 'priceCurrency' => 'KZT', 'priceSpecification' => ['@type' => 'UnitPriceSpecification', 'price' => (string) $car->base_price, 'priceCurrency' => 'KZT', 'referenceQuantity' => ['@type' => 'QuantitativeValue', 'value' => 1, 'unitCode' => 'DAY']]];
-            $vehicle = ['@context' => 'https://schema.org', '@type' => ['Vehicle', 'Product'], 'name' => localized($car, 'name'), 'brand' => ['@type' => 'Brand', 'name' => $car->brand->name], 'url' => $seo['canonical'], 'offers' => $offer];
+            $vehicle = ['@context' => 'https://schema.org', '@type' => ['Vehicle', 'Product'], 'name' => localized($car, 'name'), 'url' => $seo['canonical'], 'offers' => $offer];
+            if ($car->brand) {
+                $vehicle['brand'] = ['@type' => 'Brand', 'name' => $car->brand->name];
+            }
             if ($car->main_image) {
                 $vehicle['image'] = $root.$car->main_image->display_url;
             }if ($car->year) {

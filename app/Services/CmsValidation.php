@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Car;
+use App\Models\CarBrand;
 use App\Models\CarCategory;
 use App\Models\CarDiscount;
 use App\Models\CarImage;
@@ -47,7 +48,7 @@ class CmsValidation
     {
         foreach ($m->definition()['fields'] ?? [] as $f) {
             $n = $f['column'];
-            if ($f['primary'] || $f['nullable'] || in_array($n, ['created_at', 'updated_at'])) {
+            if ($f['primary'] || $f['nullable'] || in_array($n, ['created_at', 'updated_at']) || ($m instanceof Car && in_array($n, ['brand_id', 'category_id']))) {
                 continue;
             }if (! array_key_exists($n, $m->getAttributes()) || $m->getAttributes()[$n] === null) {
                 $m->$n = $f['default'] ?? match ($f['type']) {
@@ -65,6 +66,16 @@ class CmsValidation
             $m->path = '/'.$m->slug.'/';
         }
         if ($m instanceof Car) {
+            if (! $m->exists && ! $m->brand_id) {
+                $name = mb_strtolower(trim($m->name));
+                $brand = CarBrand::all(['id', 'name'])->sortByDesc(fn (CarBrand $brand): int => mb_strlen($brand->name))
+                    ->first(function (CarBrand $brand) use ($name): bool {
+                        $brandName = mb_strtolower($brand->name);
+
+                        return $name === $brandName || str_starts_with($name, $brandName.' ');
+                    });
+                $m->brand_id = $brand?->id;
+            }
             if (! $m->legacy_path) {
                 $m->legacy_path = '/car/'.$m->slug;
             }if (! $m->legacy_id) {

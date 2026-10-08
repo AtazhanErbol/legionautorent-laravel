@@ -8,4 +8,9 @@ use App\Filament\Resources\RedirectResource;
 class CreateRedirect extends CreateRecord
 {
     protected static string $resource = RedirectResource::class;
+
+    public function getHeading(): string
+    {
+        return 'Новое перенаправление';
+    }
 }
