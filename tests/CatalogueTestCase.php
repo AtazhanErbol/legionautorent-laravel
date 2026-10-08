@@ -2,9 +2,12 @@
 
 namespace Tests;
 
+use App\Models\CarImage;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 abstract class CatalogueTestCase extends TestCase
 {
@@ -24,6 +27,13 @@ abstract class CatalogueTestCase extends TestCase
         parent::setUp();
         $this->assertSame('legion_test', config('database.connections.mysql.database'));
         config(['legion.staging' => false]);
+        Storage::fake('media');
+        $fixture = UploadedFile::fake()->image('catalogue-fixture.jpg', 32, 20);
+        $contents = file_get_contents($fixture->getRealPath());
+        foreach (CarImage::query()->pluck('original')->filter()->unique() as $path) {
+            Storage::disk('media')->put($path, $contents);
+        }
+
     }
 
     protected function prepareUrlForRequest($uri): string

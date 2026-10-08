@@ -6,7 +6,7 @@
     "tests": 47,
     "passed": 47,
     "assertions": 1966,
-    "duration_ms": 40730
+    "duration_ms": 44082
   },
   "public_browser": {
     "cases": [
@@ -356,5 +356,18 @@
       "price_filter": true,
       "city_retained": true
     }
-  ]
+  ],
+  "photos_preview": {
+    "admin_errors": [],
+    "admin_http_errors": [],
+    "photo_previews": 4,
+    "1440": {
+      "image_width": 411,
+      "opacity": "1"
+    },
+    "390": {
+      "image_width": 349,
+      "opacity": "1"
+    }
+  }
 }
