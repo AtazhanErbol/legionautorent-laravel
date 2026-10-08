@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="{{ dv('language',get_defined_vars()) }}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#10100f">
+<title>{{ site_text('Сервис временно недоступен') }}</title>
+<link rel="stylesheet" href="{{ '/static/'.'css/error-page.css' }}"><link rel="icon" type="image/jpeg" href="{{ '/static/'.'img/favicon-original.jpg' }}"></head>
+<body><a class="skip-link" href="#main">{{ site_text('Перейти к содержимому') }}</a>
+<header><a href="<?php if((dv('language',get_defined_vars()) == 'kk')): ?>/kk/<?php elseif((dv('language',get_defined_vars()) == 'en')): ?>/en/<?php else: ?>/<?php endif; ?>" aria-label="LEGIONAUTORENT — {{ site_text('Главная') }}"><img src="{{ '/static/'.'img/logo-site.webp' }}" width="140" height="36" alt="LEGIONAUTORENT"></a><a href="tel:+77057277777">+7 (705) 727-77-77</a></header>
+<main id="main" tabindex="-1"><p class="eyebrow">LEGIONAUTORENT / 500</p><p class="error-code" aria-hidden="true">500</p><h1>{{ site_text('Сервис временно недоступен') }}</h1><p class="description">{{ site_text('Попробуйте позже или позвоните нам.') }}</p><div class="actions"><a class="button" href="tel:+77057277777">{{ site_text('Позвонить') }} ↗</a><a class="button outline" href="https://wa.me/77057277777" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></main>
+</body></html>

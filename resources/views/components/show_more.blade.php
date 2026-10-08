@@ -1,0 +1,1 @@
+<div class="fleet-more"><p class="subtle" data-fleet-status aria-live="polite"></p><button class="button button-outline" type="button" data-show-more hidden>{{ site_text('Показать ещё') }}<span aria-hidden="true">＋</span></button><p class="subtle" data-fleet-empty hidden>{{ site_text('Пока нет совпадений') }}</p></div>

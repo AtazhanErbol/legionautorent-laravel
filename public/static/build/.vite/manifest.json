@@ -1,0 +1,30 @@
+{
+  "frontend/main.js": {
+    "file": "assets/main-B7b3T9qQ.js",
+    "name": "main",
+    "src": "frontend/main.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "frontend/mercedes-preview.js"
+    ],
+    "css": [
+      "assets/main-CQtYcu7D.css"
+    ],
+    "assets": [
+      "assets/grain-Blhu7toF.webp"
+    ]
+  },
+  "frontend/mercedes-preview.js": {
+    "file": "assets/mercedes-preview-D-70Vh_7.js",
+    "name": "mercedes-preview",
+    "src": "frontend/mercedes-preview.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "frontend/main.js"
+    ]
+  },
+  "public/static/hero/grain.webp": {
+    "file": "assets/grain-Blhu7toF.webp",
+    "src": "public/static/hero/grain.webp"
+  }
+}

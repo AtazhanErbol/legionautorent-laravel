@@ -1,0 +1,1 @@
+<div hidden data-analytics data-gtm="{{ dv('site.gtm_id',get_defined_vars()) }}" data-ga="{{ dv('site.ga4_id',get_defined_vars()) }}" data-metrika="{{ dv('site.metrika_id',get_defined_vars()) }}"></div>

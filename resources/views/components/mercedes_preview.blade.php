@@ -1,0 +1,21 @@
+<section class="mercedes-preview" data-mercedes-preview data-sequence="<?php if(truth(dv('hero_film.sequence',get_defined_vars()))): ?>true<?php endif; ?>" data-state="static" data-mode="static">
+  {{ df(dv('hero_film.sequence',get_defined_vars()),'json_script','hero-frames') }}
+  <div class="mercedes-pin"><div class="mercedes-stage">
+
+    <script nonce="{{ dv('request.csp_nonce',get_defined_vars()) }}">(()=>{const root=document.currentScript.closest('[data-mercedes-preview]');if(root.dataset.sequence&&!matchMedia('(prefers-reduced-motion:reduce)').matches)root.dataset.mode='cinematic';})();</script>
+    <div class="mercedes-picture"><picture><source media="(max-width:899px)" srcset="{{ dv('hero_film.mobile',get_defined_vars()) }}"><img src="{{ dv('hero_film.poster',get_defined_vars()) }}" width="1280" height="720" alt="{{ dv('hero_film.alt',get_defined_vars()) }}" fetchpriority="high" decoding="async"></picture><canvas class="mercedes-canvas" width="1280" height="720" aria-hidden="true"></canvas></div>
+    <div class="mercedes-veil" aria-hidden="true"></div><div class="mercedes-grain" aria-hidden="true"></div>
+    <div class="mercedes-edition" aria-hidden="true"><span><span class="brand-name">LEGIONAUTORENT</span></span><span>AUTO / RENT</span></div>
+    <div class="mercedes-captions container">
+      <div class="mercedes-caption mercedes-caption--intro" data-band data-start="0" data-end="0.22"><p class="mercedes-eyebrow"><span><span class="brand-name"><span class="brand-name">LEGIONAUTORENT</span></span> / {{ df(dv('city',get_defined_vars()),'tr','name') }}</span></p><h1 data-contrast>{{ dv('seo.h1',get_defined_vars()) }}</h1></div>
+      <div class="mercedes-caption mercedes-caption--price" data-band data-start="0.23" data-end="0.54"><p class="mercedes-eyebrow"><span>02 / {{ site_text('Автопарк') }}</span></p><p class="mercedes-display" data-contrast>{{ dv('hero_film.hero_price_caption',get_defined_vars()) }}</p><p class="mercedes-count"><span><strong>{{ dv('car_count',get_defined_vars()) }}</strong> {{ site_text('автомобилей') }}</span></p></div>
+      <div class="mercedes-caption mercedes-caption--steps" data-band data-start="0.55" data-end="0.77"><p class="mercedes-eyebrow"><span>03 / {{ site_text('Всё просто') }}</span></p><p class="mercedes-step-line" data-contrast>{{ dv('hero_film.hero_steps_caption',get_defined_vars()) }}</p></div>
+      <div class="mercedes-caption mercedes-caption--end" data-band data-start="0.78" data-end="1"><p class="mercedes-eyebrow"><span>04 / <span class="brand-name">LEGIONAUTORENT</span></span></p><p class="mercedes-display" data-contrast>{{ df(dv('site',get_defined_vars()),'tr','hero_title') }}</p><div class="mercedes-actions"><a class="button" href="#fleet">{{ site_text('Выбрать автомобиль') }} ↗</a><a class="button outline" href="{{ dv('site.whatsapp_url',get_defined_vars()) }}" target="_blank" rel="noopener noreferrer" data-event="click_whatsapp" data-context="hero">{{ icon('whatsapp') }} WhatsApp</a></div></div>
+    </div>
+    <div class="mercedes-bottom container"><a class="text-link" href="#fleet">{{ site_text('К автопарку') }} <span aria-hidden="true">↘</span></a></div>
+    <div class="mercedes-chapter" aria-hidden="true"><span data-chapter>01</span><i></i><span>04</span></div>
+    <div class="mercedes-progress" aria-hidden="true"><span></span></div>
+  </div></div>
+  @include('components.search_bar')
+  <script nonce="{{ dv('request.csp_nonce',get_defined_vars()) }}">(()=>{const root=document.currentScript.closest('[data-mercedes-preview]');if(root.dataset.mode==='static'||matchMedia('(min-width:900px)').matches)root.querySelector('.mercedes-stage').append(root.querySelector('.search-wrap'));})();</script>
+</section>
