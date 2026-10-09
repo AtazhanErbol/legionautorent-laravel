@@ -19,7 +19,6 @@ use App\Models\ContentBlock;
 use App\Models\FAQ;
 use App\Models\Page;
 use App\Models\SiteSettings;
-use App\Services\BookingCsv;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -111,8 +110,7 @@ abstract class CmsResource extends Resource
         $columns = [TextColumn::make($title)->label($def['name'])->searchable()->forceSearchCaseInsensitive()->sortable()->limit(75)];
         foreach (['base_price', 'phone', 'kind', 'section', 'language', 'status', 'path', 'sort_order'] as $f) {
             if (in_array($f, $fields) && $f !== $title) {
-                $columns[] = TextColumn::make($f)->label(collect($def['fields'])->firstWhere('column', $f)['label'])->sortable()->searchable()->forceSearchCaseInsensitive()->badge(in_array($f, ['status', 'language', 'kind']))
-                    ->formatStateUsing(fn ($state) => static::getModel() === BookingRequest::class && in_array($f, ['status', 'kind']) ? BookingCsv::label($f, $state) : $state);
+                $columns[] = TextColumn::make($f)->label(collect($def['fields'])->firstWhere('column', $f)['label'])->sortable()->searchable()->forceSearchCaseInsensitive()->badge(in_array($f, ['status', 'language', 'kind']));
             }
         }
         if (in_array('active', $fields)) {
@@ -133,9 +131,23 @@ abstract class CmsResource extends Resource
         $actions = [EditAction::make(), DeleteAction::make()];
         $toolbar = [];
         if (static::getModel() === BookingRequest::class) {
-            $toolbar[] = Action::make('csv')->label('Скачать заявки для Excel (CSV)')
-                ->tooltip('Выгрузка с названиями городов и автомобилей. Учитываются выбранные фильтры и сортировка.')
-                ->action(fn ($livewire) => BookingCsv::download($livewire->getFilteredSortedTableQuery()));
+            $toolbar[] = Action::make('csv')->label('Скачать CSV')->action(function ($livewire) {
+                return response()->streamDownload(function () use ($livewire) {
+                    $fp = fopen('php://output', 'w');
+                    fwrite($fp, "\xEF\xBB\xBF");
+                    $cols = ['id', 'created_at', 'name', 'phone', 'city_id', 'car_id', 'status', 'kind', 'start_date', 'end_date', 'comment', 'manager_note', 'source_page', 'utm_source', 'utm_medium', 'utm_campaign'];
+                    fputcsv($fp, $cols);
+                    foreach ($livewire->getFilteredTableQuery()->cursor() as $r) {
+                        $row = [];
+                        foreach ($cols as $c) {
+                            $s = (string) $r->$c;
+                            if (preg_match('/^[=+\-@\t\r]/', $s)) {
+                                $s = "'".$s;
+                            }$row[] = $s;
+                        }fputcsv($fp, $row);
+                    }fclose($fp);
+                }, 'legion-leads.csv', ['Content-Type' => 'text/csv; charset=utf-8']);
+            });
         }
         $table->columns($columns)->filters($filters)->recordActions($actions)->toolbarActions($toolbar)->paginated([25, 50, 100])->defaultSort(in_array('sort_order', $fields) ? 'sort_order' : 'id', static::getModel() === BookingRequest::class ? 'desc' : 'asc');
         if (in_array('sort_order', $fields)) {

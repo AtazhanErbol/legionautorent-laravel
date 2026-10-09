@@ -6,18 +6,17 @@ export function initMercedesPreview(root){
   const canvas=root.querySelector('canvas'),poster=root.querySelector('img');
   let context;
   const stage=root.querySelector('.mercedes-stage'),booking=root.querySelector('.search-wrap');
-  const pin=root.querySelector('.mercedes-pin'),actions=root.querySelector('[data-hero-actions]');
-  let actionsVisible;
+  const pin=root.querySelector('.mercedes-pin');
   const progress=root.querySelector('.mercedes-progress span'),chapter=root.querySelector('[data-chapter]');
   const reduced=matchMedia('(prefers-reduced-motion:reduce)'),compact=matchMedia('(max-width:899px)');
   const bands=[...root.querySelectorAll('[data-band]')].map(el=>({el,start:+el.dataset.start,end:+el.dataset.end,opacity:-1}));
   const clamp=n=>Math.max(0,Math.min(1,n));
   let variant,enabled=false,dead=false,inView=true,frame=0,lastTick=0,shown=0,target=0;
   let start=0,distance=1,lastWidth=innerWidth,drawn=-1,epoch=0,loaded=0;
-  let activeFetches=0,activeDecodes=0,background=0,hasMoved=false,warmed=false;
+  let activeFetches=0,activeDecodes=0,background=0,hasMoved=false;
   const encoded=new Map(),images=new Map(),fetching=new Set(),decoding=new Set();
   const requests=[],decodeQueue=[],controllers=new Set(),failed=new Set();
-  const maxImages=()=>compact.matches?24:32;
+  const maxImages=()=>compact.matches?18:26;
   const workerJobs=new Map();let worker,workerReady=false,workerSequence=0;
   const stopWorker=()=>{
     workerReady=false;worker?.terminate();worker=null;
@@ -26,7 +25,7 @@ export function initMercedesPreview(root){
   function startWorker(){if(worker||!data.count||reduced.matches||!('Worker'in window))return;try{
     worker=new Worker(new URL('./hero-frame-worker.js',import.meta.url));
     worker.onmessage=({data})=>{
-      if('ready'in data){workerReady=data.ready;if(!data.ready)stopWorker();else prepareFrames(0);return;}
+      if('ready'in data){workerReady=data.ready;if(!data.ready)stopWorker();return;}
       const job=workerJobs.get(data.id);workerJobs.delete(data.id);
       if(!job){data.image?.close();return;}
       if(data.error)job.reject();else job.resolve(data.image);
@@ -53,11 +52,6 @@ export function initMercedesPreview(root){
     });
     const visible=staticMode||compact.matches||booking.contains(document.activeElement)||bands[0].el.style.visibility==='visible';
     booking.style.opacity=visible?'1':'0';booking.style.visibility=visible?'visible':'hidden';booking.inert=!visible;
-    const showActions=staticMode||compact.matches||p>=.78;
-    if(actionsVisible!==showActions){
-      actionsVisible=showActions;actions.style.opacity=showActions?'1':'0';actions.style.visibility=showActions?'visible':'hidden';
-      actions.inert=!showActions;actions.setAttribute('aria-hidden',String(!showActions));
-    }
     progress.style.transform=`scaleX(${p})`;chapter.textContent=String(active+1).padStart(2,'0');
     root.dataset.progress=p.toFixed(4);
   }
@@ -154,21 +148,20 @@ export function initMercedesPreview(root){
     while(activeFetches<2){
       if(!requests.length){
         while(background<variant.packs.length&&(encoded.has(background*data.packSize)||fetching.has(background)||failed.has(background)))background++;
-        const limit=hasMoved?Math.min(variant.packs.length,Math.floor(target*(data.count-1)/data.packSize)+5):(warmed?4:1);
-        if(navigator.connection?.saveData||background>=limit)return;
+        if((!hasMoved&&background>=1)||navigator.connection?.saveData||background>=variant.packs.length)return;
         requests.push(background++);
       }
       const index=requests.shift(),generation=epoch,controller=new AbortController();
       controllers.add(controller);fetching.add(index);activeFetches++;
       const timeout=setTimeout(()=>controller.abort(),15000);
-      fetch(variant.packs[index],{signal:controller.signal,priority:hasMoved&&index===Math.floor(target*(data.count-1)/data.packSize)?'high':'low'}).then(response=>{
+      fetch(variant.packs[index],{signal:controller.signal,priority:'low'}).then(response=>{
         if(!response.ok)throw new Error('Frame response '+response.status);
         return response.arrayBuffer();
       }).then(buffer=>{
         if(generation!==epoch||dead)return;
         unpack(buffer,index);
         needFrame(Math.round(shown*(data.count-1)));
-        prepareFrames(Math.round(target*(data.count-1)));
+        needFrame(Math.round(target*(data.count-1)));
         if(drawn<0)needFrame(0);
         schedule();
       }).catch(error=>{
@@ -178,20 +171,6 @@ export function initMercedesPreview(root){
         if(generation===epoch){activeFetches--;fetching.delete(index);pumpFetches();}
       });
     }
-  }
-
-  function prepareFrames(index,direction=1,stride=1){
-    needFrame(index);
-    for(let step=1;step<=6;step++)needFrame(Math.max(0,Math.min(data.count-1,index+step*stride*direction)),false);
-  }
-
-  function warmStart(){
-    if(warmed||!enabled||!poster.complete||!poster.naturalWidth)return;
-    warmed=true;startWorker();
-    // The HTML poster has painted before this small startup buffer is decoded.
-    // Keep later packs close to the playhead instead of downloading the orbit.
-    for(let index=1;index<=12;index++)needFrame(index,false);
-    pumpFetches();
   }
 
   function tick(now){
@@ -207,7 +186,8 @@ export function initMercedesPreview(root){
     // Input time keeps advancing while a slow decoder catches up. Keep only
     // current/predicted requests; obsolete speculative frames must not queue.
     decodeQueue.forEach(index=>decoding.delete(index));decodeQueue.length=0;
-    prepareFrames(candidate,direction,stride);
+    needFrame(candidate);
+    for(let step=1;step<=3;step++)needFrame(Math.max(0,Math.min(data.count-1,candidate+step*stride*direction)),false);
     shown=Math.abs(target-next)<.00015?target:next;
     let available=candidate;
     if(!images.has(available)){
@@ -244,7 +224,7 @@ export function initMercedesPreview(root){
   }
   function apply(){
     if(!canvas.getContext||!data.count||reduced.matches){fallback();return;}
-    enabled=false;release();hasMoved=false;warmed=false;actionsVisible=undefined;variant=data[compact.matches?'mobile':'desktop'];
+    enabled=false;release();hasMoved=false;variant=data[compact.matches?'mobile':'desktop'];
     bands.forEach(band=>band.opacity=-1);
     canvas.width=variant.width;canvas.height=variant.height;
     enabled=true;shown=0;root.dataset.variant=compact.matches?'mobile':'desktop';
@@ -260,7 +240,7 @@ export function initMercedesPreview(root){
       // Native HTML poster is already on screen. Avoid allocating/uploading a
       // canvas until movement; first frame downloading never delays the LCP.
       if(drawn<0){drawn=0;root.dataset.frame='0';root.dataset.state='ready';}
-      queueFrame(warmStart);schedule();
+      schedule();
     }
   }
 

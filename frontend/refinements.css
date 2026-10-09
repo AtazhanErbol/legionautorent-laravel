@@ -109,15 +109,3 @@ button:focus-visible,.button:focus-visible,.icon-button:focus-visible,.car-detai
 @media(max-width:767px){.quick-filter{grid-template-columns:1fr 1fr}.quick-filter>div:first-child{grid-column:1/-1}.quick-filter>.button{grid-column:1/-1}.catalog-sidebar form{grid-template-columns:1fr}}
 
 .fleet-toolbar{justify-content:flex-end}.fleet-toolbar .sort-control{margin-left:auto}
-
-/* A city-specific cover, keeping the original heading and catalogue links. */
-.city-hero-inner{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;padding:40px;border:1px solid var(--line);border-top:2px solid var(--yellow);border-radius:4px;background:var(--surface);margin-top:16px;margin-bottom:24px}
-.city-hero-copy{min-width:0}.city-hero .eyebrow{margin-bottom:24px;color:var(--yellow)}
-.city-hero h1{font-size:clamp(28px,2.8vw,40px);line-height:1.15;max-width:24ch}
-.city-hero-photo{transform:none;background:var(--paper);min-width:0;border:1px solid var(--line)}
-.city-hero-photo>span{gap:16px;padding:18px;font-size:14px;line-height:1.4}
-.city-hero-photo>span>span{font-size:11px;color:var(--yellow);white-space:nowrap}
-.city-hero-actions{gap:24px}.city-car-count{font-size:12px}.city-car-count strong{font-size:36px}
-@media(max-width:999px){.city-hero-inner{gap:24px;padding:28px}.city-hero h1{font-size:28px}.city-hero-actions{flex-wrap:wrap}}
-@media(max-width:767px){.city-hero-inner{grid-template-columns:1fr;padding:24px 20px;gap:28px}.city-hero h1{font-size:clamp(23px,5.8vw,32px);max-width:27ch}.city-hero .eyebrow{font-size:12px;letter-spacing:.04em}.city-hero-actions{gap:20px}.city-hero-actions .button{padding-inline:16px;min-width:0}.city-hero-photo>span{padding:14px;font-size:13px}.city-hero-photo img{aspect-ratio:4/3}}
-@media(max-width:359px){.city-hero-inner{padding:20px 16px}.city-hero-actions .button{width:100%}.city-hero h1{font-size:22px}}
