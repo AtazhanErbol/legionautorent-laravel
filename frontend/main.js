@@ -43,8 +43,17 @@ initFleets();
 const motionTriggers=['scroll','pointerdown','keydown'];
 const startPageMotion=()=>{
   motionTriggers.forEach(type=>window.removeEventListener(type,startPageMotion));
-  if('requestIdleCallback'in window)requestIdleCallback(initPageMotion,{timeout:500});
-  else setTimeout(initPageMotion,0);
+  const start=()=>{
+    if('requestIdleCallback'in window)requestIdleCallback(initPageMotion,{timeout:500});
+    else setTimeout(initPageMotion,0);
+  };
+  const hero=document.querySelector('[data-mercedes-preview][data-mode=cinematic]'),fleet=document.getElementById('fleet');
+  if(hero&&fleet&&'IntersectionObserver'in window){
+    const nearby=new IntersectionObserver(entries=>{
+      if(entries.some(entry=>entry.isIntersecting)){nearby.disconnect();start();}
+    },{rootMargin:'320px'});
+    nearby.observe(fleet);
+  }else start();
 };
 motionTriggers.forEach(type=>window.addEventListener(type,startPageMotion,{passive:true}));
 window.dataLayer=window.dataLayer||[];
